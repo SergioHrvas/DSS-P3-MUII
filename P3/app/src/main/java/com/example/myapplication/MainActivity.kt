@@ -15,17 +15,44 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
+import com.example.myapplication.ApiService;
 
 class MainActivity : ComponentActivity() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var productAdapter: ProductAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main) // Usa tu archivo XML
+        setContentView(R.layout.activity_main) // Asegúrate de usar tu archivo XML
 
-        // Configurar RecyclerView
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerViewProducts)
+        // Set up RecyclerView
+        recyclerView = findViewById(R.id.
+        recyclerViewProducts)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val productAdapter = ProductAdapter(sampleProducts)
+
+        productAdapter = ProductAdapter(sampleProducts)
         recyclerView.adapter = productAdapter
+
+        // Llamada a la API
+        apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
+            override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
+                if (response.isSuccessful) {
+                    val productList = response.body()
+                    productList?.let {
+                        // Actualizar el adaptador con los datos recibidos
+                        productAdapter = ProductAdapter(it)
+                        recyclerView.adapter = productAdapter
+                    }
+                } else {
+                    Log.e("API_ERROR", "Response not successful: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Product>>, t: Throwable) {
+                // Manejar el error de la llamada
+                Log.e("API_ERROR", "Failure: ${t.message}")
+            }
+        })
     }
 }
 
