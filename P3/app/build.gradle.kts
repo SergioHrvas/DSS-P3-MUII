@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -63,4 +64,6 @@ dependencies {
 
     // Logging Interceptor (opcional para depuración)
     implementation(libs.logging.interceptor)
+
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
 }
