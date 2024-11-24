@@ -10,7 +10,7 @@ interface ApiService {
     // Get all products
     // Devolvemos en GSON para poder usar RecyclerView //TODO GET POST PATH DELETE ADD
 
-    @GET("/products")
+    @GET("/api/products")
     fun getAllProducts(): Call<List<Product>>
 
 

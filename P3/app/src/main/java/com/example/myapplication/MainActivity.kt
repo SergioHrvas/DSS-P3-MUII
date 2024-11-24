@@ -14,8 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ui.theme.MyApplicationTheme
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import com.example.myapplication.ApiService;
+import android.util.Log;
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -23,38 +26,44 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main) // Asegúrate de usar tu archivo XML
+        setContentView(R.layout.activity_main)
 
-        // Set up RecyclerView
-        recyclerView = findViewById(R.id.
-        recyclerViewProducts)
+        // Configurar RecyclerView
+        recyclerView = findViewById(R.id.recyclerViewProducts)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        productAdapter = ProductAdapter(sampleProducts)
-        recyclerView.adapter = productAdapter
+        // Llamar al método para obtener los productos
+        fetchProductsFromApi()
+    }
 
-        // Llamada a la API
+    private fun fetchProductsFromApi() {
+        val apiService = ApiClient.createService(ApiService::class.java)
+
         apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
-            override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
+            override fun onResponse(
+                call: Call<List<Product>>,
+                response: Response<List<Product>>
+            ) {
                 if (response.isSuccessful) {
-                    val productList = response.body()
-                    productList?.let {
-                        // Actualizar el adaptador con los datos recibidos
-                        productAdapter = ProductAdapter(it)
+                    val data = response.body()
+                    data?.let { productList ->
+                        Log.v("API_RESPONSE", "${productList}")
+                        // Actualizar el RecyclerView con los datos recibidos
+                        productAdapter = ProductAdapter(productList)
                         recyclerView.adapter = productAdapter
                     }
                 } else {
-                    Log.e("API_ERROR", "Response not successful: ${response.code()}")
+                    Log.e("API_RESPONSE", "Error: ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<List<Product>>, t: Throwable) {
-                // Manejar el error de la llamada
                 Log.e("API_ERROR", "Failure: ${t.message}")
             }
         })
     }
 }
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
