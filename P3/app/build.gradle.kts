@@ -65,5 +65,6 @@ dependencies {
     // Logging Interceptor (opcional para depuración)
     implementation(libs.logging.interceptor)
 
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
+    implementation(libs.androidx.constraintlayout)
+    implementation (libs.material)
 }
