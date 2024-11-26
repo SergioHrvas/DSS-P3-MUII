@@ -27,7 +27,7 @@ class ProductAdapter(private val productList: List<Product>) :
                                   ProductViewHolder, position: Int) {
         val product = productList[position]
         holder.textViewName.text = product.name
-        holder.textViewPrice.text = "$${product.price}"
+        holder.textViewPrice.text = "${product.price}€"
     }
 
     // Devuelve el tamaño de la lista

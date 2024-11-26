@@ -19,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import com.example.myapplication.ApiService;
 import android.util.Log;
+import android.widget.TextView
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -30,6 +31,8 @@ class MainActivity : ComponentActivity() {
 
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewProducts)
+        val headerTitle = findViewById<TextView>(R.id.headerTitle)
+        headerTitle.text = "${headerTitle.text} - Lista de productos"
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Llamar al método para obtener los productos

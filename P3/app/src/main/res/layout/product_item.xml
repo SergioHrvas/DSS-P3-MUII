@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Product Name"
-        android:textSize="18sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <TextView
@@ -19,6 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Price"
-        android:textSize="16sp"
-        android:textColor="@android:color/holo_green_dark" />
+        android:textSize="26sp"
+        android:textColor="@color/black" />
 </LinearLayout>
