@@ -16,6 +16,7 @@ class ProductAdapter(private val productList: List<Product>) :
         return ProductViewHolder(view)
     }
 
+
     class ProductViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         val textViewName: TextView = itemView.

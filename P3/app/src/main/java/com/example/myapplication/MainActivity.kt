@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,8 @@ import retrofit2.Response
 import com.example.myapplication.ApiService;
 import android.util.Log;
 import android.widget.TextView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -29,11 +32,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewProducts)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
         headerTitle.text = "${headerTitle.text} - Lista de productos"
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
+
+        fab.setOnClickListener {
+            // Navegar a la siguiente pantalla
+            val intent = Intent(this, NewProductActivity::class.java)
+            startActivity(intent)
+        }
 
         // Llamar al método para obtener los productos
         fetchProductsFromApi()
@@ -47,12 +60,17 @@ class MainActivity : ComponentActivity() {
                 call: Call<List<Product>>,
                 response: Response<List<Product>>
             ) {
+                Log.v("API_RESPONSE", "$response")
+
                 if (response.isSuccessful) {
                     val data = response.body()
+                    Log.v("API_RESPONSE", "${data}")
+
                     data?.let { productList ->
                         Log.v("API_RESPONSE", "${productList}")
                         // Actualizar el RecyclerView con los datos recibidos
                         productAdapter = ProductAdapter(productList)
+
                         recyclerView.adapter = productAdapter
                     }
                 } else {
