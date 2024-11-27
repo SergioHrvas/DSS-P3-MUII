@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 import com.example.myapplication.ApiService;
+<<<<<<< Updated upstream
+=======
+import android.util.Log;
+import android.widget.Button
+import android.widget.TextView
+>>>>>>> Stashed changes
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -25,6 +32,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main) // Asegúrate de usar tu archivo XML
 
+<<<<<<< Updated upstream
         // Set up RecyclerView
         recyclerView = findViewById(R.id.
         recyclerViewProducts)
@@ -32,6 +40,28 @@ class MainActivity : ComponentActivity() {
 
         productAdapter = ProductAdapter(sampleProducts)
         recyclerView.adapter = productAdapter
+=======
+        // Configurar RecyclerView
+        recyclerView = findViewById(R.id.recyclerViewProducts)
+        //val headerTitle = findViewById<TextView>(R.id.headerTitle)
+        //headerTitle.text = "${headerTitle.text} - Lista de productos"
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // Botón para ir al carrito
+        val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
+        buttonGoToCart.setOnClickListener {
+            val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Llamar al método para obtener los productos
+        fetchProductsFromApi()
+    }
+
+
+    private fun fetchProductsFromApi() {
+        val apiService = ApiClient.createService(ApiService::class.java)
+>>>>>>> Stashed changes
 
         // Llamada a la API
         apiService.getAllProducts().enqueue(object : Callback<List<Product>> {

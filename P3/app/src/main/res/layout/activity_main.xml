@@ -20,4 +20,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+<<<<<<< Updated upstream
 </androidx.constraintlayout.widget.ConstraintLayout>
+=======
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Agregar Producto"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/colorAccent"
+        app:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/buttonGoToCart"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="154dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="91dp"
+        android:layout_marginBottom="17dp"
+        android:text="Carrito"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fabAddProduct"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewProducts" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+>>>>>>> Stashed changes
