@@ -21,14 +21,23 @@
         android:background="?android:attr/listDivider"
         android:layout_marginTop="8dp" />
 
-    <!-- RecyclerView debajo del Header y Divider -->
+    <!-- RecyclerView para mostrar productos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProducts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="8dp"/>
+        android:padding="8dp" />
+
+    <!-- Botón para ir al carrito -->
+    <Button
+        android:id="@+id/buttonGoToCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Ir al carrito"
+        android:gravity="center" />
 
     <!-- FloatingActionButton para agregar producto -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -43,3 +52,4 @@
         android:layout_gravity="end|bottom" />
 
 </LinearLayout>
+

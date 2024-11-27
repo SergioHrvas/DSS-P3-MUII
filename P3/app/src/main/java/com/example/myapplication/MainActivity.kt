@@ -19,10 +19,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.myapplication.ApiService;
+import android.widget.Button
 import android.util.Log;
 import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
+
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -34,55 +36,61 @@ class MainActivity : ComponentActivity() {
 
 
 
-        // Configurar RecyclerView
-        recyclerView = findViewById(R.id.recyclerViewProducts)
-        val headerTitle = findViewById<TextView>(R.id.headerTitle)
-        headerTitle.text = "${headerTitle.text} - Lista de productos"
-        recyclerView.layoutManager = LinearLayoutManager(this)
+// Configurar RecyclerView
+recyclerView = findViewById(R.id.recyclerViewProducts)
+val headerTitle = findViewById<TextView>(R.id.headerTitle)
+headerTitle.text = "${headerTitle.text} - Lista de productos"
+recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
+// Configurar adaptador con datos de muestra o datos de la API
+productAdapter = ProductAdapter(sampleProducts)
+recyclerView.adapter = productAdapter
 
-        fab.setOnClickListener {
-            // Navegar a la siguiente pantalla
-            val intent = Intent(this, NewProductActivity::class.java)
-            startActivity(intent)
+// Botón para ir al carrito
+val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
+buttonGoToCart.setOnClickListener {
+    val intent = Intent(this, CartActivity::class.java)
+    startActivity(intent)
+}
+
+// FloatingActionButton para añadir productos
+val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
+fab.setOnClickListener {
+    val intent = Intent(this, NewProductActivity::class.java)
+    startActivity(intent)
+}
+
+// Llamar al método para obtener los productos
+private fun fetchProductsFromApi() {
+    val apiService = ApiClient.createService(ApiService::class.java)
+
+    apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
+        override fun onResponse(
+            call: Call<List<Product>>,
+            response: Response<List<Product>>
+        ) {
+            Log.v("API_RESPONSE", "$response")
+
+            if (response.isSuccessful) {
+                val data = response.body()
+                Log.v("API_RESPONSE", "${data}")
+
+                data?.let { productList ->
+                    Log.v("API_RESPONSE", "${productList}")
+                    // Actualizar el RecyclerView con los datos recibidos
+                    productAdapter = ProductAdapter(productList)
+
+                    recyclerView.adapter = productAdapter
+                }
+            } else {
+                Log.e("API_RESPONSE", "Error: ${response.code()}")
+            }
         }
 
-        // Llamar al método para obtener los productos
-        fetchProductsFromApi()
-    }
-
-    private fun fetchProductsFromApi() {
-        val apiService = ApiClient.createService(ApiService::class.java)
-
-        apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
-            override fun onResponse(
-                call: Call<List<Product>>,
-                response: Response<List<Product>>
-            ) {
-                Log.v("API_RESPONSE", "$response")
-
-                if (response.isSuccessful) {
-                    val data = response.body()
-                    Log.v("API_RESPONSE", "${data}")
-
-                    data?.let { productList ->
-                        Log.v("API_RESPONSE", "${productList}")
-                        // Actualizar el RecyclerView con los datos recibidos
-                        productAdapter = ProductAdapter(productList)
-
-                        recyclerView.adapter = productAdapter
-                    }
-                } else {
-                    Log.e("API_RESPONSE", "Error: ${response.code()}")
-                }
-            }
-
-            override fun onFailure(call: Call<List<Product>>, t: Throwable) {
-                Log.e("API_ERROR", "Failure: ${t.message}")
-            }
-        })
-    }
+        override fun onFailure(call: Call<List<Product>>, t: Throwable) {
+            Log.e("API_ERROR", "Failure: ${t.message}")
+        }
+    })
 }
 
 
