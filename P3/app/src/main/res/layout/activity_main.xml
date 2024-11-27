@@ -1,23 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:background="@drawable/background_gradient">
 
-    <!-- RecyclerView para mostrar la lista de productos -->
+    <!-- Incluir el Header -->
+    <include
+        android:id="@+id/includeHeader"
+        layout="@layout/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Divider debajo del Header -->
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        android:layout_marginTop="8dp" />
+
+    <!-- RecyclerView para mostrar productos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProducts"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
-        android:padding="16dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:padding="8dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Botón para ir al carrito -->
+    <Button
+        android:id="@+id/buttonGoToCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Ir al carrito"
+        android:gravity="center" />
+
+    <!-- FloatingActionButton para agregar producto -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Agregar Producto"
+        android:src="@drawable/ic_add"
+        android:backgroundTint="@color/colorAccent"
+        android:elevation="8dp"
+        android:layout_gravity="end|bottom" />
+
+</LinearLayout>
+

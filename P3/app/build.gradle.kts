@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.myapplication"
-        minSdk = 33
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -65,5 +65,6 @@ dependencies {
     // Logging Interceptor (opcional para depuración)
     implementation(libs.logging.interceptor)
 
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
+    implementation(libs.androidx.constraintlayout)
+    implementation (libs.material)
 }
