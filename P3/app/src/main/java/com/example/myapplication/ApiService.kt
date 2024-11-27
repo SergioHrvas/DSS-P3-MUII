@@ -13,7 +13,11 @@ interface ApiService {
     @GET("/api/products")
     fun getAllProducts(): Call<List<Product>>
 
-
+    //He planteado que no hace falta un objeto cart puesto que en el fondo
+    // es el mismo concepto que products solo que la disposición futura en la UI
+    //será distinta
+    @GET("/api/cart")
+    fun getCartProducts(): Call<List<Product>>
 
     // Add a product (POST request example)
     /*@POST("/products/add")
@@ -22,4 +26,5 @@ interface ApiService {
         @Query("price") price: Double
     ): Call<Void>
      */
+
 }
