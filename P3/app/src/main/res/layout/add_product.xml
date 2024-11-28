@@ -1,28 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_gradient">
+    android:orientation="vertical"
+    android:background="@drawable/background_gradient"
+    android:padding="16dp">
 
     <!-- Incluir el Header -->
     <include
         android:id="@+id/includeHeader2"
         layout="@layout/header"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <!-- Divider debajo del Header (opcional) -->
     <View
         android:id="@+id/headerDivider2"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintTop_toBottomOf="@id/includeHeader2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginTop="8dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Campo para el Nombre -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre"
+            android:inputType="textPersonName" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Campo para el Precio -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/editTextPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Precio"
+            android:inputType="numberDecimal" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Imagen -->
+    <ImageView
+        android:id="@+id/imageViewProduct"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/sample_image" />
+
+    <!-- Botón para seleccionar imagen -->
+    <Button
+        android:id="@+id/btnSelectImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar Imagen"
+        android:layout_marginTop="4dp"
+        android:layout_gravity="center" />
+
+    <!-- Botón para crear producto -->
+    <Button
+        android:id="@+id/btnNewProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crear Producto"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center" />
+</LinearLayout>

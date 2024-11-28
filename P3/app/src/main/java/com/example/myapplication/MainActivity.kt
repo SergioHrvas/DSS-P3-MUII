@@ -35,35 +35,40 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
 
 
+        // Configurar RecyclerView
+        recyclerView = findViewById(R.id.recyclerViewProducts)
+        val headerTitle = findViewById<TextView>(R.id.headerTitle)
+        headerTitle.text = "${headerTitle.text} - Lista de productos"
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-// Configurar RecyclerView
-recyclerView = findViewById(R.id.recyclerViewProducts)
-val headerTitle = findViewById<TextView>(R.id.headerTitle)
-headerTitle.text = "${headerTitle.text} - Lista de productos"
-recyclerView.layoutManager = LinearLayoutManager(this)
+        // Configurar adaptador con datos de muestra o datos de la API
+        // productAdapter = ProductAdapter(sampleProducts)
+        // recyclerView.adapter = productAdapter
 
-// Configurar adaptador con datos de muestra o datos de la API
-productAdapter = ProductAdapter(sampleProducts)
-recyclerView.adapter = productAdapter
+        // Botón para ir al carrito
+        val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
+        buttonGoToCart.setOnClickListener {
+            val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent)
+        }
 
-// Botón para ir al carrito
-val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
-buttonGoToCart.setOnClickListener {
-    val intent = Intent(this, CartActivity::class.java)
-    startActivity(intent)
-}
+        // FloatingActionButton para añadir productos
+        val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
+        fab.setOnClickListener {
+            val intent = Intent(this, NewProductActivity::class.java)
+            startActivity(intent)
+        }
 
-// FloatingActionButton para añadir productos
-val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
-fab.setOnClickListener {
-    val intent = Intent(this, NewProductActivity::class.java)
-    startActivity(intent)
-}
+        fetchProductsFromApi()
+
+    }
+
 
 // Llamar al método para obtener los productos
 private fun fetchProductsFromApi() {
     val apiService = ApiClient.createService(ApiService::class.java)
 
+    Log.v("Aaa", "aaa");
     apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
         override fun onResponse(
             call: Call<List<Product>>,
@@ -92,20 +97,4 @@ private fun fetchProductsFromApi() {
         }
     })
 }
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyApplicationTheme {
-        Greeting("Android")
-    }
 }

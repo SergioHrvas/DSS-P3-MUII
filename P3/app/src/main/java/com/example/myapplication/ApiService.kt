@@ -5,6 +5,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import com.example.myapplication.Product
 import retrofit2.Call
+import retrofit2.http.Body
 
 interface ApiService {
     // Get all products
@@ -20,11 +21,10 @@ interface ApiService {
     fun getCartProducts(): Call<List<Product>>
 
     // Add a product (POST request example)
-    /*@POST("/products/add")
-    fun addProduct(
-        @Query("name") name: String,
-        @Query("price") price: Double
-    ): Call<Void>
-     */
+    @POST("/api/admin/save_product")
+    fun createProduct(
+        @Body product: Product
+    ): Call<Product>
+
 
 }
