@@ -18,7 +18,7 @@ interface ApiService {
     // es el mismo concepto que products solo que la disposición futura en la UI
     //será distinta
     @GET("/api/cart")
-    fun getCartProducts(): Call<List<Product>>
+    fun getCartProducts(): Call<List<CartProduct>>
 
     // Add a product (POST request example)
     @POST("/api/admin/save_product")
