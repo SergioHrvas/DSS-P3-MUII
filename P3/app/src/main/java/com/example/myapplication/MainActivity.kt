@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
         // Botón para ir al carrito
         val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
         buttonGoToCart.setOnClickListener {
+            Log.v("MainActivity", "Botón Carrito presionado")
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
