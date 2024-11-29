@@ -30,7 +30,7 @@ class CartAdapter(private val cartProductList: List<CartProduct>) :
         // Asignar valores a las vistas
         holder.textViewName.text = cartProduct.name
         holder.textViewPrice.text = "Precio: ${cartProduct.price}€"
-        holder.textViewCantidad.text = "Cantidad: ${cartProduct.cantidad}"
+        holder.textViewCantidad.text = "Cantidad: ${cartProduct.num}"
         holder.textViewTotal.text = "Total: ${cartProduct.total}€"
     }
 

@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +14,7 @@ class CartActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var cartAdapter: CartAdapter // Usamos CartAdapter en lugar de ProductAdapter
 
+    private var totalPrice: Double = 0.0;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
@@ -23,6 +25,12 @@ class CartActivity : ComponentActivity() {
 
         // Llamar al método para obtener los productos del carrito
         fetchCartFromApi()
+
+
+
+
+
+
     }
 
     private fun fetchCartFromApi() {
@@ -39,6 +47,12 @@ class CartActivity : ComponentActivity() {
                         Log.v("API_RESPONSE", "$cartProductList")
                         // Configurar el adaptador con los datos recibidos
                         cartAdapter = CartAdapter(cartProductList)
+
+                        for(cartProduct in cartProductList){
+                            totalPrice += (cartProduct.price * cartProduct.num)
+                        }
+                        val totalPriceTextView = findViewById<TextView>(R.id.textViewTotalPrice)
+                        totalPriceTextView.text = "Total: ${totalPrice}"
                         recyclerView.adapter = cartAdapter
                     }
                 } else {
