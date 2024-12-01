@@ -2,4 +2,5 @@
 <resources>
 
     <style name="Theme.MyApplication"  parent="Theme.MaterialComponents.DayNight.NoActionBar"/>
+
 </resources>

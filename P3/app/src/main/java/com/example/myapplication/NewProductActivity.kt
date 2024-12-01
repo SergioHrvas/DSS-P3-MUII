@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,6 +26,7 @@ import retrofit2.Response
 import com.example.myapplication.ApiService;
 import android.util.Log;
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -70,7 +73,6 @@ class NewProductActivity : ComponentActivity() {
 
         val nameInputLayout = findViewById<TextInputLayout>(R.id.inputLayoutName)
 
-
         // Configurar el botón para crear producto
         btnNewProduct.setOnClickListener {
 
@@ -79,18 +81,73 @@ class NewProductActivity : ComponentActivity() {
             // Get the text from the EditText
             val price = editTextPrice?.text.toString()
 
-            Log.v("precio; ", "${price}")
-
             val editTextName = nameInputLayout.editText  // This gives you the EditText inside the TextInputLayout
 
             // Get the text from the EditText
             val name = editTextName?.text.toString()
-            Log.v("precio; ", "${name}")
 
             // Llamar al método para crear producto
-            if(price.isNotEmpty())
+            if(price.isNotEmpty()) {
                 createProduct(name, price.toDouble())
+                // Una vez agregado el producto, volvemos atrás
+                val intent = Intent()
+                setResult(
+                    RESULT_OK,
+                    intent
+                ) // Esto asegura que la actividad principal sabrá que se ha agregado un producto
+                finish()  // Volver atrás
+            }
+            else{
+
+            }
         }
+
+
+        val editTextName: EditText = findViewById(R.id.editTextName)
+
+        editTextName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+                // No es necesario hacer nada aquí
+            }
+
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                if (charSequence?.isNotEmpty() == true) {
+                    // El hint se oculta cuando el usuario escribe
+                    editTextName.hint = ""
+                } else {
+                    // Restaurar el hint si el campo está vacío
+                    editTextName.hint = "Nombre"
+                }
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                // No es necesario hacer nada aquí
+            }
+        })
+
+        val editTextPrice: EditText = findViewById(R.id.editTextPrice)
+
+        editTextPrice.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
+                // No es necesario hacer nada aquí
+            }
+
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                if (charSequence?.isNotEmpty() == true) {
+                    // El hint se oculta cuando el usuario escribe
+                    editTextPrice.hint = ""
+                } else {
+                    // Restaurar el hint si el campo está vacío
+                    editTextPrice.hint = "Nombre"
+                }
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                // No es necesario hacer nada aquí
+            }
+        })
+
+
     }
 
     // Método para abrir la galería o cámara

@@ -6,6 +6,7 @@ import retrofit2.http.Query
 import com.example.myapplication.Product
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 
 interface ApiService {
     // Get all products
@@ -26,5 +27,8 @@ interface ApiService {
         @Body product: Product
     ): Call<Product>
 
-
+    @DELETE("api/admin/delete_product/{id}")
+    fun deleteProduct(
+        @Path("id") id: Long
+    ): Call<Boolean>
 }

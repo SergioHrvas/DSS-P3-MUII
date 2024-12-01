@@ -22,6 +22,7 @@ import com.example.myapplication.ApiService;
 import android.widget.Button
 import android.util.Log;
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 
@@ -29,6 +30,14 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
+    private val ADD_PRODUCT_REQUEST_CODE = 1
+
+    private val addProductLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // Si el resultado es OK, actualizar la lista de productos
+            fetchProductsFromApi() // Actualizar la lista de productos
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +66,7 @@ class MainActivity : ComponentActivity() {
         val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
         fab.setOnClickListener {
             val intent = Intent(this, NewProductActivity::class.java)
-            startActivity(intent)
+            addProductLauncher.launch(intent)
         }
 
         fetchProductsFromApi()
@@ -67,35 +76,46 @@ class MainActivity : ComponentActivity() {
 
 // Llamar al método para obtener los productos
 private fun fetchProductsFromApi() {
-    val apiService = ApiClient.createService(ApiService::class.java)
+        val apiService = ApiClient.createService(ApiService::class.java)
 
-    Log.v("Aaa", "aaa");
-    apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
-        override fun onResponse(
-            call: Call<List<Product>>,
-            response: Response<List<Product>>
-        ) {
-            Log.v("API_RESPONSE", "$response")
-
-            if (response.isSuccessful) {
-                val data = response.body()
-                Log.v("API_RESPONSE", "${data}")
-
-                data?.let { productList ->
-                    Log.v("API_RESPONSE", "${productList}")
-                    // Actualizar el RecyclerView con los datos recibidos
-                    productAdapter = ProductAdapter(productList)
-
-                    recyclerView.adapter = productAdapter
+        apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
+            override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { productList ->
+                        // Configuramos el adaptador con la lista de productos y el callback
+                        productAdapter = ProductAdapter(productList.toMutableList()) { product ->
+                            // Aquí pasamos el producto recibido al método deleteProductFromApi
+                            deleteProductFromApi(product)
+                        }
+                        recyclerView.adapter = productAdapter
+                    }
+                } else {
+                    Log.e("API_RESPONSE", "Error: ${response.code()}")
                 }
-            } else {
-                Log.e("API_RESPONSE", "Error: ${response.code()}")
             }
-        }
 
-        override fun onFailure(call: Call<List<Product>>, t: Throwable) {
-            Log.e("API_ERROR", "Failure: ${t.message}")
-        }
-    })
-}
+            override fun onFailure(call: Call<List<Product>>, t: Throwable) {
+                Log.e("API_ERROR", "Failure: ${t.message}")
+            }
+        })
+    }
+
+    private fun deleteProductFromApi(product: Product) {
+        val apiService = ApiClient.createService(ApiService::class.java)
+        apiService.deleteProduct(product.id).enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    productAdapter.removeProduct(product) // Eliminamos el producto del adaptador
+                    Log.d("API_DELETE", "${product.name} eliminado con éxito")
+                } else {
+                    Log.e("API_DELETE", "Error al eliminar: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Log.e("API_DELETE", "Error de red: ${t.message}")
+            }
+        })
+    }
+
 }
