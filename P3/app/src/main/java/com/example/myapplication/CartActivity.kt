@@ -1,7 +1,9 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,18 +21,17 @@ class CartActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
 
-        // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewCart)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Llamar al método para obtener los productos del carrito
         fetchCartFromApi()
 
-
-
-
-
-
+        val buttonCheckout = findViewById<Button>(R.id.buttonCheckout)
+        buttonCheckout.setOnClickListener {
+            val intent = Intent(this, CheckoutActivity::class.java)
+            intent.putExtra("totalPrice", totalPrice)
+            startActivity(intent)
+        }
     }
 
     private fun fetchCartFromApi() {

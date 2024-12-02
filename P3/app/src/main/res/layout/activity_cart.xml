@@ -21,8 +21,8 @@
     <!-- Botón para regresar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="115dp"
+        android:layout_height="55dp"
         android:layout_margin="16dp"
         android:text="Regresar"
         app:backgroundTint="@color/colorAccent"
@@ -31,17 +31,33 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- TextView para mostrar el precio total -->
+
     <TextView
         android:id="@+id/textViewTotalPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="18dp"
+        android:layout_marginBottom="16dp"
         android:text="Precio final : 0.00$"
+        android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/buttonBack" />
+
+    <Button
+        android:id="@+id/buttonCheckout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="22dp"
+        android:background="@drawable/button_green_background"
+        android:text="Pagar"
+        android:textColor="#FFFFFF"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

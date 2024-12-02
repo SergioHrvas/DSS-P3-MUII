@@ -31,4 +31,7 @@ interface ApiService {
     fun deleteProduct(
         @Path("id") id: Long
     ): Call<Boolean>
+
+    @POST("api/admin/cart/pay/")
+    fun checkout(): Call<String>
 }
