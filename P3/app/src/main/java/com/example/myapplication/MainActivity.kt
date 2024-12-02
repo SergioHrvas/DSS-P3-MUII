@@ -25,7 +25,8 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
-
+import androidx.preference.PreferenceManager
+import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Configuration.getInstance().load(applicationContext, PreferenceManager.getDefaultSharedPreferences(applicationContext))
 
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewProducts)
@@ -57,10 +59,17 @@ class MainActivity : ComponentActivity() {
         // Botón para ir al carrito
         val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
         buttonGoToCart.setOnClickListener {
-            Log.v("MainActivity", "Botón Carrito presionado")
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
+
+        // Botón para ir al mapa
+        val buttonGoToMap = findViewById<Button>(R.id.buttonGoToMap)
+        buttonGoToMap.setOnClickListener {
+            val intent = Intent(this, MapActivity::class.java)
+            startActivity(intent)
+        }
+
 
         // FloatingActionButton para añadir productos
         val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
