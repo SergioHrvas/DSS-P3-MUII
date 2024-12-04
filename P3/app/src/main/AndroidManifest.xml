@@ -37,6 +37,7 @@
         <activity android:name=".NewProductActivity"/>
         <activity android:name=".CartActivity"/>
         <activity android:name=".MapActivity"/>
+        <activity android:name=".CheckoutActivity"/>
 
     </application>
 

@@ -48,9 +48,6 @@ class NewProductActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_product)
-
-
-
         // Configurar RecyclerView
         //recyclerView = findViewById(R.id.recylerAddProduct)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
