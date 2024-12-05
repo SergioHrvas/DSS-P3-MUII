@@ -5,33 +5,29 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.ui.theme.MyApplicationTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.myapplication.ApiService;
-import android.util.Log;
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import com.google.android.material.textfield.TextInputLayout
+import com.google.gson.Gson
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.http.Part
+import java.io.File
+import java.net.URI
 
 class NewProductActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -41,152 +37,150 @@ class NewProductActivity : ComponentActivity() {
     private lateinit var btnSelectImage: Button
     private lateinit var btnNewProduct: Button
 
-    // Código para seleccionar una imagen de la galería
     private val IMAGE_PICK_CODE = 1000
     private val CAMERA_REQUEST_CODE = 1001
+
+    private var selectedImageUri: URI? = null
+    private var selectedImageFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_product)
-        // Configurar RecyclerView
-        //recyclerView = findViewById(R.id.recylerAddProduct)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
         headerTitle.text = "${headerTitle.text} - Crear producto"
-
-
 
         imageViewProduct = findViewById(R.id.imageViewProduct)
         btnSelectImage = findViewById(R.id.btnSelectImage)
         btnNewProduct = findViewById(R.id.btnNewProduct)
 
-        // Configurar el botón para seleccionar una imagen
         btnSelectImage.setOnClickListener {
-            // Llamar al método para abrir la galería o cámara
             openImageChooser()
         }
 
         val priceInputLayout = findViewById<TextInputLayout>(R.id.inputLayoutPrice)
-
-
         val nameInputLayout = findViewById<TextInputLayout>(R.id.inputLayoutName)
 
-        // Configurar el botón para crear producto
         btnNewProduct.setOnClickListener {
-
-            val editTextPrice = priceInputLayout.editText  // This gives you the EditText inside the TextInputLayout
-
-            // Get the text from the EditText
+            val editTextPrice = priceInputLayout.editText
             val price = editTextPrice?.text.toString()
-
-            val editTextName = nameInputLayout.editText  // This gives you the EditText inside the TextInputLayout
-
-            // Get the text from the EditText
+            val editTextName = nameInputLayout.editText
             val name = editTextName?.text.toString()
 
-            // Llamar al método para crear producto
-            if(price.isNotEmpty()) {
-                createProduct(name, price.toDouble())
-                // Una vez agregado el producto, volvemos atrás
-                val intent = Intent()
-                setResult(
-                    RESULT_OK,
-                    intent
-                ) // Esto asegura que la actividad principal sabrá que se ha agregado un producto
-                finish()  // Volver atrás
-            }
-            else{
-
+            if (selectedImageFile != null) {
+                if (name.isNotEmpty()) {
+                    if (price.isNotEmpty()) {
+                        createProduct(name, price.toDouble(), selectedImageFile!!)
+                        val intent = Intent()
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "El precio no puede estar vacío", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Por favor selecciona una imagen", Toast.LENGTH_SHORT).show()
             }
         }
 
-
         val editTextName: EditText = findViewById(R.id.editTextName)
-
         editTextName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
-                // No es necesario hacer nada aquí
-            }
-
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
                 if (charSequence?.isNotEmpty() == true) {
-                    // El hint se oculta cuando el usuario escribe
                     editTextName.hint = ""
                 } else {
-                    // Restaurar el hint si el campo está vacío
                     editTextName.hint = "Nombre"
                 }
             }
-
-            override fun afterTextChanged(editable: Editable?) {
-                // No es necesario hacer nada aquí
-            }
+            override fun afterTextChanged(editable: Editable?) {}
         })
 
         val editTextPrice: EditText = findViewById(R.id.editTextPrice)
-
         editTextPrice.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
-                // No es necesario hacer nada aquí
-            }
-
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
                 if (charSequence?.isNotEmpty() == true) {
-                    // El hint se oculta cuando el usuario escribe
                     editTextPrice.hint = ""
                 } else {
-                    // Restaurar el hint si el campo está vacío
                     editTextPrice.hint = "Nombre"
                 }
             }
-
-            override fun afterTextChanged(editable: Editable?) {
-                // No es necesario hacer nada aquí
-            }
+            override fun afterTextChanged(editable: Editable?) {}
         })
-
-
     }
 
-    // Método para abrir la galería o cámara
     private fun openImageChooser() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
-    // Manejar el resultado de la selección de la imagen
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Verificar si la imagen fue seleccionada correctamente
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            // Obtener la URI de la imagen seleccionada
-            val imageUri: Uri? = data?.data
-            imageViewProduct.setImageURI(imageUri) // Mostrar la imagen seleccionada
+            data?.data?.let { uri ->
+                selectedImageUri = URI(uri.toString())
+                val filePath = getFilePathFromUri(uri)
+                val selectedImageFile = File(filePath)
+                val permanentFile = File(filesDir, "selected_image.png") // Asegúrate de usar la extensión correcta
+
+                if (selectedImageFile.exists()) {
+                    selectedImageFile.copyTo(permanentFile, overwrite = true)
+                    Log.v("Image", "Imagen copiada: ${permanentFile.absolutePath}")
+
+                    imageViewProduct.setImageURI(Uri.fromFile(permanentFile))
+
+                    Toast.makeText(this, "Imagen seleccionada: ${permanentFile.name}", Toast.LENGTH_LONG).show()
+
+                    this.selectedImageFile = permanentFile // Asignar el archivo con extensión correcta
+                }
+            }
         }
     }
 
+    private fun getFilePathFromUri(uri: Uri): String {
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        cursor?.moveToFirst()
+        val index = cursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: -1
+        val fileName = if (index != -1) cursor?.getString(index) else "temp_file"
+        cursor?.close()
 
+        val inputStream = contentResolver.openInputStream(uri)
+        val tempFile = File.createTempFile(fileName, null, cacheDir)
+        inputStream?.use { input ->
+            tempFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+        return tempFile.absolutePath
+    }
 
-    // Llamar al método para obtener los productos
-    private fun createProduct(name: String, price: Double) {
+    private fun createProduct(name: String, price: Double, image: File) {
         val apiService = ApiClient.createService(ApiService::class.java)
 
         val product = Product(name, price)
 
+        val gson = Gson()
+        val productJson = gson.toJson(product)
 
+        val productRequestBody = productJson.toRequestBody("application/json".toMediaTypeOrNull())
+        val productPart = MultipartBody.Part.createFormData("product", null, productRequestBody)
 
-        apiService.createProduct(product).enqueue(object : Callback<Product> {
-            override fun onResponse(
-                call: Call<Product>,
-                response: Response<Product>
-            ) {
+        val imageRequestBody = image.asRequestBody("image/*".toMediaTypeOrNull())
+        val imagePart = MultipartBody.Part.createFormData("file", image.name, imageRequestBody)
+
+        Log.v("DATOS:", "${productPart}")
+        Log.v("IMAGEPART:", "${imagePart}")
+
+        apiService.createProduct(productPart, imagePart).enqueue(object : Callback<Product> {
+            override fun onResponse(call: Call<Product>, response: Response<Product>) {
                 Log.v("API_RESPONSE", "$response")
-
                 if (response.isSuccessful) {
                     val data = response.body()
                     Log.v("API_RESPONSE", "${data}")
-
-
                 } else {
                     Log.e("API_RESPONSE", "Error: ${response.code()}")
                 }

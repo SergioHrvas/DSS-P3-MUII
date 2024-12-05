@@ -38,8 +38,8 @@
             android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Precio"
-            android:inputType="numberDecimal"
+            android:hint="Nombre"
+            android:inputType="text"
             android:textColor="@color/white"
             android:textColorHint="@android:color/darker_gray" />
     </com.google.android.material.textfield.TextInputLayout>

@@ -8,6 +8,7 @@ data class CartProduct(
     val id: Long,
     val name: String,
     val price: Double,
+    val image: String,
     val num: Int,
 ) {
     val total: Double
@@ -19,6 +20,7 @@ data class CartProduct(
         name = name,
         price = price,
         num = num,
+        image = "default.png"
     )
 }
 
