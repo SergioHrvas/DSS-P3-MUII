@@ -91,8 +91,9 @@ private fun fetchProductsFromApi() {
             override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { productList ->
+                        Log.v("IMAGENES", "$productList")
                         // Configuramos el adaptador con la lista de productos y el callback
-                        productAdapter = ProductAdapter(productList.toMutableList()) { product ->
+                        productAdapter = ProductAdapter(this@MainActivity, productList.toMutableList()) { product ->
                             // Aquí pasamos el producto recibido al método deleteProductFromApi
                             deleteProductFromApi(product)
                         }

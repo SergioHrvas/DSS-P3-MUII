@@ -161,7 +161,7 @@ class NewProductActivity : ComponentActivity() {
     private fun createProduct(name: String, price: Double, image: File) {
         val apiService = ApiClient.createService(ApiService::class.java)
 
-        val product = Product(name, price)
+        val product = Product(name, price, "")
 
         val gson = Gson()
         val productJson = gson.toJson(product)

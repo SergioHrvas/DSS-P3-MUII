@@ -69,4 +69,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation (libs.material)
     implementation (libs.osmdroid.android);
+
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+
 }
