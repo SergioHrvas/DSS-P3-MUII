@@ -1,69 +1,87 @@
 package com.example.myapplication
 
-import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
 import android.widget.TextView
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-class CartActivity : ComponentActivity() {
+
+class CartActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var cartAdapter: CartAdapter // Usamos CartAdapter en lugar de ProductAdapter
+    private lateinit var cartAdapter: CartAdapter
+    private lateinit var textViewTotalPrice: TextView
+    private lateinit var buttonBack: MaterialButton
+    private lateinit var buttonCheckout: MaterialButton
 
-    private var totalPrice: Double = 0.0;
+    private var cartItems = mutableListOf<Product>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
 
+        // Enlazar vistas
         recyclerView = findViewById(R.id.recyclerViewCart)
+        textViewTotalPrice = findViewById(R.id.textViewTotalPrice)
+        buttonBack = findViewById(R.id.buttonBack)
+        buttonCheckout = findViewById(R.id.buttonCheckout)
+
+        // Configurar RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
+        cartAdapter = CartAdapter(cartItems, this::removeFromCart)
+        recyclerView.adapter = cartAdapter
 
-        fetchCartFromApi()
+        // Cargar elementos del carrito
+        loadCartItems()
 
-        val buttonCheckout = findViewById<Button>(R.id.buttonCheckout)
+        // Botón para regresar
+        buttonBack.setOnClickListener {
+            finish()
+        }
+
+        // Botón para proceder al pago
         buttonCheckout.setOnClickListener {
-            val intent = Intent(this, CheckoutActivity::class.java)
-            intent.putExtra("totalPrice", totalPrice)
-            startActivity(intent)
+            // Aquí puedes implementar la lógica para procesar el pago
+            clearCart()
         }
     }
 
-    private fun fetchCartFromApi() {
-        val apiService = ApiClient.createService(ApiService::class.java)
+    private fun loadCartItems() {
+        val sharedPreferences = getSharedPreferences("CartPrefs", MODE_PRIVATE)
+        val cartJson = sharedPreferences.getString("cart_items", "[]")
+        cartItems = Gson().fromJson(cartJson, object : TypeToken<MutableList<Product>>() {}.type)
+        cartAdapter.updateCart(cartItems)
+        updateTotalPrice()
+    }
 
-        apiService.getCartProducts().enqueue(object : Callback<List<CartProduct>> {
-            override fun onResponse(
-                call: Call<List<CartProduct>>,
-                response: Response<List<CartProduct>>
-            ) {
-                if (response.isSuccessful) {
-                    val data = response.body()
-                    data?.let { cartProductList ->
-                        Log.v("API_RESPONSE", "$cartProductList")
-                        // Configurar el adaptador con los datos recibidos
-                        cartAdapter = CartAdapter(cartProductList)
+    private fun saveCartItems() {
+        val sharedPreferences = getSharedPreferences("CartPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val cartJson = Gson().toJson(cartItems)
+        editor.putString("cart_items", cartJson)
+        editor.apply()
+    }
 
-                        for(cartProduct in cartProductList){
-                            totalPrice += (cartProduct.price * cartProduct.num)
-                        }
-                        val totalPriceTextView = findViewById<TextView>(R.id.textViewTotalPrice)
-                        totalPriceTextView.text = "Total: ${totalPrice}"
-                        recyclerView.adapter = cartAdapter
-                    }
-                } else {
-                    Log.e("API_RESPONSE", "Error: ${response.code()} - ${response.message()}")
-                }
-            }
+    private fun removeFromCart(product: Product) {
+        cartItems.remove(product)
+        saveCartItems()
+        cartAdapter.updateCart(cartItems)
+        updateTotalPrice()
+    }
 
-            override fun onFailure(call: Call<List<CartProduct>>, t: Throwable) {
-                Log.e("API_ERROR", "Failure: ${t.message}")
-            }
-        })
+    private fun clearCart() {
+        cartItems.clear()
+        saveCartItems()
+        cartAdapter.updateCart(cartItems)
+        updateTotalPrice()
+    }
+
+    private fun updateTotalPrice() {
+        val totalPrice = cartItems.sumOf { it.price }
+        textViewTotalPrice.text = "Precio final : $${"%.2f".format(totalPrice)}"
     }
 }
