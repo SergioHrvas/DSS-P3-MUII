@@ -15,4 +15,9 @@ object RetrofitClient {
         }
         return retrofit!!
     }
+
+    val authService: ApiService by lazy {
+        retrofit!!.create(ApiService::class.java)
+    }
+
 }

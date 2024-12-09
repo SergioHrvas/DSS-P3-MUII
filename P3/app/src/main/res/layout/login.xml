@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/background_gradient">
+
+    <!-- Incluir el Header -->
+    <include
+        android:id="@+id/includeHeader"
+        layout="@layout/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
+
+        <!-- Campo para el Nombre -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="10dp"
+            app:hintEnabled="false"
+            app:boxStrokeWidth="2dp"
+            app:boxStrokeColor="@color/design_default_color_primary"
+            app:boxBackgroundMode="filled">
+            <EditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="@android:color/darker_gray" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!-- Campo para el Precio -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayoutPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="10dp"
+                app:boxBackgroundMode="filled"
+                app:boxStrokeColor="@color/design_default_color_primary"
+                app:boxStrokeWidth="2dp"
+                app:hintEnabled="false">
+
+                <EditText
+                    android:id="@+id/editTextPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Contraseña"
+                    android:inputType="textPassword"
+                    android:textColor="@color/white"
+                    android:textColorHint="@android:color/darker_gray" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+    <!-- Botón para crear producto -->
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Iniciar sesión"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center" />
+</LinearLayout>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>FASTCAR</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+	<!-- Barra de navegación -->
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/">FASTCAR</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/">Inicio</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/products">Lista de productos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/cart">Mi carro</a>
+					</li>
+					<li class="nav-item" sec:authorize="isAuthenticated()">
+						<a class="nav-link" href="/logout">Cerrar sesión</a>
+					</li>
+					<li class="nav-item" sec:authorize="!isAuthenticated()">
+						<a class="nav-link" href="/login">Iniciar sesión</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	
+	<!-- Encabezado -->
+	<header class="bg-primary text-white text-center py-5">
+		<h1>Bienvenido a FastCar</h1>
+		<p>Tu web de compras online</p>
+	</header>
+
+	<!-- Contenido principal -->
+	<div class="container mt-5 mb-4">
+		<h2>Servicios</h2>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Lista de productos</h5>
+						<p class="card-text">Todos los productos disponibles en nuestra tienda.</p>
+						<a href="products" class="btn btn-primary">Ver más</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Mi carro</h5>
+						<p class="card-text">Productos que has añadido a tu carro de compra.</p>
+						<a href="cart" class="btn btn-primary">Ver más</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Administración</h5>
+						<p class="card-text">Servicios de administración.</p>
+						<a href="/admin/new_product" class="btn btn-primary">Ver más</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+	<!-- Bootstrap JS (Opcional) -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<footer class="bg-body-tertiary text-center text-lg-start">
+	<!-- Copyright -->
+	<div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+		© 2024 Copyright:
+		<a class="text-body" href="/">FastCar</a>
+	</div>
+	<!-- Copyright -->
+</footer>
+
+</html>

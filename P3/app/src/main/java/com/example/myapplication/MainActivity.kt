@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
         Configuration.getInstance().load(applicationContext, PreferenceManager.getDefaultSharedPreferences(applicationContext))
 
+
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewProducts)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
@@ -67,6 +68,12 @@ class MainActivity : ComponentActivity() {
         val buttonGoToMap = findViewById<Button>(R.id.buttonGoToMap)
         buttonGoToMap.setOnClickListener {
             val intent = Intent(this, MapActivity::class.java)
+            startActivity(intent)
+        }
+
+        val buttonLogin = findViewById<Button>(R.id.buttonLogin)
+        buttonLogin.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
@@ -92,6 +99,7 @@ private fun fetchProductsFromApi() {
                 if (response.isSuccessful) {
                     response.body()?.let { productList ->
                         Log.v("IMAGENES", "$productList")
+
                         // Configuramos el adaptador con la lista de productos y el callback
                         productAdapter = ProductAdapter(this@MainActivity, productList.toMutableList()) { product ->
                             // Aquí pasamos el producto recibido al método deleteProductFromApi
