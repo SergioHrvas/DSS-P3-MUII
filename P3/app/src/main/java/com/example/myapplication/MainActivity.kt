@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -26,6 +27,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import okhttp3.Cookie
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
@@ -40,22 +44,75 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    var cookieManager = android.webkit.CookieManager.getInstance()
+
+
+    override fun onStart() {
+        fetchProductsFromApi()
+        super.onStart()
+
+    }
+
+    fun loadCookieToRetrofit(context: Context) {
+        val sharedPrefs = context.getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
+        val cookieValue = sharedPrefs.getString("JSESSIONID", null)
+        println("COOKIEVALUE")
+        if (cookieValue != null) {
+            val cookie = Cookie.Builder()
+                .name("JSESSIONID")
+                .value(cookieValue)
+                .domain("192.168.1.14")
+                .path("/")
+                .build()
+            RetrofitClient.cookieJar.saveFromResponse(
+                Constants.SERVER_URL.toHttpUrlOrNull()!!,
+                listOf(cookie)
+            )
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("ccccc")
+        // Establecer el layout
         setContentView(R.layout.activity_main)
+        println("Aaaa")
+        // Cargar cookie en Retrofit
+        loadCookieToRetrofit(this)
+        println("bbbbbb")
 
-        Configuration.getInstance().load(applicationContext, PreferenceManager.getDefaultSharedPreferences(applicationContext))
+        // Verificar si la cookie existe
+        // Guardar la cookie en SharedPreferences
+        val sharedPrefs = getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
+        println("sharedPrefs: $sharedPrefs")
+        val cookieValue = sharedPrefs.getString("JSESSIONID", null)
+        println("cookieValue: $cookieValue")
+
+        val editor = sharedPrefs.edit()
+        println("editor: $editor")
+
+        editor.putString("JSESSIONID", cookieValue)
+        editor.apply()
+
+        if (cookieValue.isNullOrEmpty()) {
+            // Redirigir al Login si no hay cookie
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()  // Finaliza la actividad actual
+            return
+        } else {
+            // Proceder con la actividad principal
+            println("Cookie encontrada: $cookieValue")
+        }
 
 
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewProducts)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
-        headerTitle.text = "${headerTitle.text} - Lista de productos"
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        headerTitle.text = "${headerTitle.text} - Lista de productos"  // Asegúrate de que headerTitle existe en el layout
 
-        // Configurar adaptador con datos de muestra o datos de la API
-        // productAdapter = ProductAdapter(sampleProducts)
-        // recyclerView.adapter = productAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Botón para ir al carrito
         val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
@@ -77,7 +134,6 @@ class MainActivity : ComponentActivity() {
             startActivity(intent)
         }
 
-
         // FloatingActionButton para añadir productos
         val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
         fab.setOnClickListener {
@@ -85,20 +141,21 @@ class MainActivity : ComponentActivity() {
             addProductLauncher.launch(intent)
         }
 
-        fetchProductsFromApi()
-
+        fetchProductsFromApi() // Llama a la API después de la configuración
     }
+
 
 
 // Llamar al método para obtener los productos
 private fun fetchProductsFromApi() {
         val apiService = ApiClient.createService(ApiService::class.java)
+        val cookies = cookieManager.getCookie(Constants.SERVER_URL) // Cambia por tu dominio.
 
-        apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
+        Log.v("Cookiessssssssssss:", "$cookies")
+        RetrofitClient.apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
             override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { productList ->
-                        Log.v("IMAGENES", "$productList")
 
                         // Configuramos el adaptador con la lista de productos y el callback
                         productAdapter = ProductAdapter(this@MainActivity, productList.toMutableList()) { product ->

@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -19,7 +20,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.example.myapplication.ApiClient.printStoredCookies
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -35,9 +35,16 @@ class LoginActivity : ComponentActivity() {
     private lateinit var productAdapter: ProductAdapter
 
     private lateinit var btnLogin: Button
+    var cookieManager = android.webkit.CookieManager.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        cookieManager = android.webkit.CookieManager.getInstance()
+
+        val cookieManager = android.webkit.CookieManager.getInstance()
+        val cookies = cookieManager.getCookie(Constants.SERVER_URL) // Cambia por tu dominio.
+
         setContentView(R.layout.login)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
         headerTitle.text = "${headerTitle.text} - Iniciar sesión"
@@ -57,9 +64,7 @@ class LoginActivity : ComponentActivity() {
             if (name.isNotEmpty()) {
                 if (password.isNotEmpty()) {
                     login(name, password)
-                    val intent = Intent()
-                    setResult(RESULT_OK, intent)
-                    finish()
+
                     } else {
                         Toast.makeText(this, "La contraseña no puede estar vacía", Toast.LENGTH_SHORT).show()
                     }
@@ -95,31 +100,62 @@ class LoginActivity : ComponentActivity() {
         })
     }
 
+    fun saveCookieLocally(context: Context) {
+        val sessionCookie = RetrofitClient.getCookie("JSESSIONID")
+        println("1111")
 
+        val sharedPrefs = context.getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
+        println("2222")
 
+        sharedPrefs.edit().putString("JSESSIONID", sessionCookie).apply()
+        println("3333")
 
-    private fun login(name: String, password: String, ) {
+    }
+
+    private fun login(name: String, password: String) {
         val apiService = ApiClient.createService(ApiService::class.java)
-
 
         val loginRequest = User(username = name, password = password)
 
-        Log.v("LOGINREQUEST", "$loginRequest")
-        apiService.loginUser(loginRequest).enqueue(object : Callback<ApiService.LoginResponse> {
+        RetrofitClient.apiService.loginUser(loginRequest).enqueue(object : Callback<ApiService.LoginResponse> {
             override fun onResponse(call: Call<ApiService.LoginResponse>, response: Response<ApiService.LoginResponse>) {
+                Log.v("API_RESPONSE", "Response: $response")
 
-                Log.v("API_RESPONSE", "$response")
                 if (response.isSuccessful) {
                     val data = response.body()
-                    Log.v("API_RESPONSE", "${data}")
-                    printStoredCookies()
+                    Log.v("API_RESPONSE", "Login Data: $data")
+
+                    // Guardar cookie localmente
+                    if (data != null) {
+                        println(data.sessionId)
+                    }
+
+
+                    val sessionCookie = data?.sessionId
+                    if (sessionCookie != null) {
+                        saveCookieLocally(applicationContext)
+                        Log.v("API_RESPONSE", "Cookie guardada: $sessionCookie")
+
+                        // Redirigir al MainActivity
+                        val intent = Intent()
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    } else {
+                        Log.e("API_RESPONSE", "Cookie no encontrada en la respuesta.")
+                        // Mostrar mensaje de error
+                        Toast.makeText(applicationContext, "Error: Cookie no encontrada.", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     Log.e("API_RESPONSE", "Error: ${response.code()}")
+                    // Mostrar mensaje de error al usuario
+                    Toast.makeText(applicationContext, "Error al iniciar sesión: ${response.message()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ApiService.LoginResponse>, t: Throwable) {
-                Log.e("API_ERROR", "Failure: ${t.message}")
+                Log.e("API_RESPONSE", "Error en la petición: ${t.message}")
+                // Mostrar mensaje de error al usuario
+                Toast.makeText(applicationContext, "Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
