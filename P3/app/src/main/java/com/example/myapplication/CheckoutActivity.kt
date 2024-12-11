@@ -1,64 +1,126 @@
 package com.example.myapplication
-import android.app.Activity
-import android.content.Intent
+
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-class CheckoutActivity : ComponentActivity() {
+
+class CheckoutActivity : AppCompatActivity() {
+
+    private val PREFS_NAME = "CartPrefs"
+    private val CART_KEY = "cart_items"
+
+    private lateinit var textViewSummary: TextView
+    private lateinit var textViewTotal: TextView
+    private lateinit var buttonConfirm: Button
+    private lateinit var progressBar: ProgressBar
+
+    private var cartItems = mutableListOf<Product>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
 
-        // Obtener el precio total pasado como parámetro
-        val totalPrice = intent.getDoubleExtra("totalPrice", 0.0)
-        val textViewTotal = findViewById<TextView>(R.id.textViewCheckoutTotal)
-        textViewTotal.text = "Total: $%.2f".format(totalPrice)
+        textViewSummary = findViewById(R.id.textViewSummary)
+        textViewTotal = findViewById(R.id.textViewTotal)
+        buttonConfirm = findViewById(R.id.buttonConfirm)
+        progressBar = findViewById(R.id.progressBar)
 
-        // Botón para confirmar la compra
-        val buttonConfirm = findViewById<Button>(R.id.buttonConfirmPurchase)
+        loadCartItems()
+        displayCartInfo()
+
         buttonConfirm.setOnClickListener {
-            processCheckout()
+            placeOrder()
         }
     }
 
-    private fun processCheckout() {
-        val apiService = ApiClient.createService(ApiService::class.java)
+    private fun loadCartItems() {
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val cartJson = sharedPreferences.getString(CART_KEY, "[]")
+        cartItems = Gson().fromJson(cartJson, object : TypeToken<MutableList<Product>>() {}.type)
+    }
 
-        // Realizar la llamada al endpoint de checkout
-        apiService.checkout().enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
+    private fun displayCartInfo() {
+        if (cartItems.isEmpty()) {
+            textViewSummary.text = "No hay productos en el carrito."
+            textViewTotal.text = "Total: $0.00"
+            buttonConfirm.isEnabled = false
+        } else {
+            // Muestra la lista de productos (puedes formatearlos como quieras)
+            val summary = cartItems.joinToString("\n") { "${it.name} - $${it.price}" }
+            textViewSummary.text = summary
+
+            val totalPrice = cartItems.sumOf { it.price }
+            textViewTotal.text = "Total: $${"%.2f".format(totalPrice)}"
+            buttonConfirm.isEnabled = true
+        }
+    }
+
+    private fun placeOrder() {
+        if (cartItems.isEmpty()) {
+            Toast.makeText(this, "El carrito está vacío", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Crea el objeto OrderRequest
+        val totalPrice = cartItems.sumOf { it.price }
+        val orderRequest = OrderRequest(
+            products = cartItems,
+            totalAmount = totalPrice
+        )
+
+        showLoading(true)
+
+        RetrofitClient.apiService.createOrder(orderRequest).enqueue(object : Callback<OrderResponse> {
+            override fun onResponse(call: Call<OrderResponse>, response: Response<OrderResponse>) {
+                showLoading(false)
                 if (response.isSuccessful) {
-                    // Mensaje de éxito desde la API
-                    val confirmationMessage = response.body() ?: "Compra realizada con éxito"
-                    Toast.makeText(this@CheckoutActivity, confirmationMessage, Toast.LENGTH_LONG).show()
-
-                    // Finalizar la actividad y regresar a la pantalla anterior
-                    setResult(Activity.RESULT_OK)
-                    finish()
+                    val orderResponse = response.body()
+                    if (orderResponse?.success == true) {
+                        // Orden creada con éxito
+                        Toast.makeText(this@CheckoutActivity, "Compra realizada con éxito. Orden ID: ${orderResponse.orderId}", Toast.LENGTH_LONG).show()
+                        clearCart()
+                        finish() // o redirige a otra pantalla
+                    } else {
+                        // Hubo algún error lógico en la creación de la orden
+                        Toast.makeText(this@CheckoutActivity, "Error al procesar la compra: ${orderResponse?.message ?: "Desconocido"}", Toast.LENGTH_LONG).show()
+                    }
                 } else {
-                    // Mostrar mensaje de error al usuario
-                    val errorMessage = "Error: ${response.code()} - ${response.message()}"
-                    Toast.makeText(this@CheckoutActivity, errorMessage, Toast.LENGTH_LONG).show()
+                    // Error HTTP (404, 500, etc.)
+                    Toast.makeText(this@CheckoutActivity, "Error del servidor: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                // Manejo de errores de conexión
-                Toast.makeText(
-                    this@CheckoutActivity,
-                    "Error de conexión: ${t.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+            override fun onFailure(call: Call<OrderResponse>, t: Throwable) {
+                showLoading(false)
+                Toast.makeText(this@CheckoutActivity, "Error de red: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun clearCart() {
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(CART_KEY, "[]")
+        editor.apply()
+    }
+
+    private fun showLoading(loading: Boolean) {
+        if (loading) {
+            progressBar.visibility = View.VISIBLE
+            buttonConfirm.isEnabled = false
+        } else {
+            progressBar.visibility = View.GONE
+            buttonConfirm.isEnabled = true
+        }
     }
 }

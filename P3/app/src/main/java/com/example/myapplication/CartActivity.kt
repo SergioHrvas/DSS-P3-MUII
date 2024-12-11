@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ class CartActivity : AppCompatActivity() {
     private lateinit var textViewTotalPrice: TextView
     private lateinit var buttonBack: MaterialButton
     private lateinit var buttonCheckout: MaterialButton
+    private lateinit var buttonClearCart: MaterialButton
 
     private var cartItems = mutableListOf<Product>()
 
@@ -31,7 +33,7 @@ class CartActivity : AppCompatActivity() {
         textViewTotalPrice = findViewById(R.id.textViewTotalPrice)
         buttonBack = findViewById(R.id.buttonBack)
         buttonCheckout = findViewById(R.id.buttonCheckout)
-
+        buttonClearCart = findViewById(R.id.buttonClearCart)
         // Configurar RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
         cartAdapter = CartAdapter(cartItems, this::removeFromCart)
@@ -44,10 +46,13 @@ class CartActivity : AppCompatActivity() {
         buttonBack.setOnClickListener {
             finish()
         }
-
+        buttonClearCart.setOnClickListener {
+            clearCart()
+        }
         // Botón para proceder al pago (ejemplo: solo limpia el carrito local)
         buttonCheckout.setOnClickListener {
-            clearCart()
+            val intent = Intent(this, CheckoutActivity::class.java)
+            startActivity(intent)
         }
     }
 

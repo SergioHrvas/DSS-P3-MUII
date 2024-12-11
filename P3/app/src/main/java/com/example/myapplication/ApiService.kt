@@ -44,6 +44,8 @@ interface ApiService {
         val sessionId: String,
         val role: String
     )
+    @POST("orders")
+    fun createOrder(@Body orderRequest: OrderRequest): Call<OrderResponse>
 
     @POST("/api/login")
     fun loginUser(
