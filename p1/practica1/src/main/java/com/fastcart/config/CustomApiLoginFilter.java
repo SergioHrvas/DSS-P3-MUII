@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -21,6 +22,7 @@ import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.awt.SystemColor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,13 +61,31 @@ public class CustomApiLoginFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // Si no está autenticado, manejar la lógica de login
+        if (request.getRequestURI().equals("/api/login") && request.getMethod().equalsIgnoreCase("POST")) {
+            handleLogin(request, response, filterChain);
+            return;
+        }
+
         HttpSession session = request.getSession(false); // No crear una nueva sesión, solo obtener la existente
+
+        // Obtener las cookies de la solicitud
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            // Iterar sobre las cookies y imprimir el nombre y valor
+            for (Cookie cookie : cookies) {
+                System.out.println("Cookie Name: " + cookie.getName() + ", Cookie Value: " + cookie.getValue());
+            }
+        }
+        else {
+        	System.out.println("NO COOKIES");
+        }
+        
         if (session != null) {
             SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
             SecurityContext securityContext = securityContextRepository.loadContext(new HttpRequestResponseHolder(request, response));
 
             Authentication authentication = securityContext.getAuthentication();
-            System.out.println("Authentication: " + authentication);
 
             // Verifica si el usuario está autenticado
             if (authentication != null && authentication.isAuthenticated()) {
@@ -75,11 +95,6 @@ public class CustomApiLoginFilter extends OncePerRequestFilter {
             }
         }
 
-        // Si no está autenticado, manejar la lógica de login
-        if (request.getRequestURI().equals("/api/login") && request.getMethod().equalsIgnoreCase("POST")) {
-            handleLogin(request, response, filterChain);
-            return;
-        }
 
         // Continuar con el filtro en caso de no necesitar autenticación especial
         filterChain.doFilter(request, response);
@@ -96,7 +111,6 @@ public class CustomApiLoginFilter extends OncePerRequestFilter {
 
         // Convertir el cuerpo de la solicitud a un String (JSON)
         String body = requestBody.toString();
-        System.out.println("Request Body: " + body);
 
         // Usar ObjectMapper para deserializar el JSON en un objeto LoginRequest
         ObjectMapper objectMapper = new ObjectMapper();
@@ -105,9 +119,6 @@ public class CustomApiLoginFilter extends OncePerRequestFilter {
         // Ahora puedes obtener los valores de username y password
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
-        
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
 
         try {
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
