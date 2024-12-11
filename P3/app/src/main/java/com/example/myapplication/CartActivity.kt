@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +9,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-
 class CartActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var cartAdapter: CartAdapter
@@ -19,6 +17,10 @@ class CartActivity : AppCompatActivity() {
     private lateinit var buttonCheckout: MaterialButton
 
     private var cartItems = mutableListOf<Product>()
+
+    // Misma clave y nombre de SharedPreferences que en MainActivity
+    private val PREFS_NAME = "CartPrefs"
+    private val CART_KEY = "cart_items"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,26 +45,25 @@ class CartActivity : AppCompatActivity() {
             finish()
         }
 
-        // Botón para proceder al pago
+        // Botón para proceder al pago (ejemplo: solo limpia el carrito local)
         buttonCheckout.setOnClickListener {
-            // Aquí puedes implementar la lógica para procesar el pago
             clearCart()
         }
     }
 
     private fun loadCartItems() {
-        val sharedPreferences = getSharedPreferences("CartPrefs", MODE_PRIVATE)
-        val cartJson = sharedPreferences.getString("cart_items", "[]")
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        val cartJson = sharedPreferences.getString(CART_KEY, "[]")
         cartItems = Gson().fromJson(cartJson, object : TypeToken<MutableList<Product>>() {}.type)
         cartAdapter.updateCart(cartItems)
         updateTotalPrice()
     }
 
     private fun saveCartItems() {
-        val sharedPreferences = getSharedPreferences("CartPrefs", MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val cartJson = Gson().toJson(cartItems)
-        editor.putString("cart_items", cartJson)
+        editor.putString(CART_KEY, cartJson)
         editor.apply()
     }
 

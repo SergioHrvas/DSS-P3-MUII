@@ -36,6 +36,12 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/addCartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AÑADIR " />
+
         <ImageButton
             android:id="@+id/deleteButton"
             android:layout_width="wrap_content"
@@ -54,5 +60,6 @@
             android:text="Price"
             android:textColor="@color/black"
             android:textSize="20sp" />
-</LinearLayout>
+
+    </LinearLayout>
     </LinearLayout>

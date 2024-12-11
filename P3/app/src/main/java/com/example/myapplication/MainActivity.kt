@@ -31,6 +31,8 @@ import okhttp3.Cookie
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.osmdroid.config.Configuration
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -61,7 +63,7 @@ class MainActivity : ComponentActivity() {
             val cookie = Cookie.Builder()
                 .name("JSESSIONID")
                 .value(cookieValue)
-                .domain("192.168.1.14")
+                .domain("10.0.2.2")
                 .path("/")
                 .build()
             RetrofitClient.cookieJar.saveFromResponse(
@@ -144,35 +146,63 @@ class MainActivity : ComponentActivity() {
         fetchProductsFromApi() // Llama a la API después de la configuración
     }
 
+    // Definimos las constantes de las preferencias y claves
+    private val PREFS_NAME = "CartPrefs"
+    private val CART_KEY = "cart_items"
 
+    // Dentro de fetchProductsFromApi(), al crear el adapter, agregamos el callback onAddToCartClick
+    private fun fetchProductsFromApi() {
+        // Este code snippet asume que ya obtuviste la lista productList de la API o de donde quieras.
+        // Por simplicidad asume que ya la tienes.
 
-// Llamar al método para obtener los productos
-private fun fetchProductsFromApi() {
-        val apiService = ApiClient.createService(ApiService::class.java)
-        val cookies = cookieManager.getCookie(Constants.SERVER_URL) // Cambia por tu dominio.
-
-        Log.v("Cookiessssssssssss:", "$cookies")
+        // Cargar productos (ejemplo)
         RetrofitClient.apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
             override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { productList ->
 
-                        // Configuramos el adaptador con la lista de productos y el callback
-                        productAdapter = ProductAdapter(this@MainActivity, productList.toMutableList()) { product ->
-                            // Aquí pasamos el producto recibido al método deleteProductFromApi
-                            deleteProductFromApi(product)
-                        }
+                        // Ahora el adapter incluye el callback onAddToCartClick
+                        productAdapter = ProductAdapter(
+                            this@MainActivity,
+                            productList.toMutableList(),
+                            onDeleteClick = { product ->
+                                deleteProductFromApi(product)
+                            },
+                            onAddToCartClick = { product ->
+                                addProductToCart(product)
+                            }
+                        )
                         recyclerView.adapter = productAdapter
                     }
                 } else {
                     Log.e("API_RESPONSE", "Error: ${response.code()}")
                 }
             }
-
             override fun onFailure(call: Call<List<Product>>, t: Throwable) {
                 Log.e("API_ERROR", "Failure: ${t.message}")
             }
         })
+    }
+
+    private fun addProductToCart(product: Product) {
+        val sharedPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPrefs.getString(CART_KEY, null)
+
+        val type = object : TypeToken<MutableList<Product>>() {}.type
+        val currentCart: MutableList<Product> = if (json != null) {
+            gson.fromJson(json, type)
+        } else {
+            mutableListOf()
+        }
+
+        currentCart.add(product)
+
+        val editor = sharedPrefs.edit()
+        editor.putString(CART_KEY, gson.toJson(currentCart))
+        editor.apply()
+
+        Log.d("CART", "Producto ${product.name} agregado al carrito.")
     }
 
     private fun deleteProductFromApi(product: Product) {

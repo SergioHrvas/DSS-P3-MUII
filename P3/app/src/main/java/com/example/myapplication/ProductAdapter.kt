@@ -1,69 +1,62 @@
 package com.example.myapplication
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import java.net.URI
 
 class ProductAdapter(
     private val context: Context,
     private val productList: MutableList<Product>,
-    private val onDeleteClick: (Product) -> Unit
-) :
-    RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+    private val onDeleteClick: (Product) -> Unit,
+    private val onAddToCartClick: (Product) -> Unit
+) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
-    // Crea el ViewHolder y asocia el layout para cada elemento
+    class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val textViewName: TextView = itemView.findViewById(R.id.productName)
+        val textViewPrice: TextView = itemView.findViewById(R.id.productPrice)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+        val addCartButton: Button = itemView.findViewById(R.id.addCartButton) // Asegúrate de tener este botón en el layout
+        val imageViewProduct: ImageView = itemView.findViewById(R.id.imageViewProduct)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.product_item, parent, false)
         return ProductViewHolder(view)
     }
 
-
-    class ProductViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-        val textViewName: TextView = itemView.
-        findViewById(R.id.productName)
-        val textViewPrice: TextView = itemView.
-        findViewById(R.id.productPrice)
-        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
-        val imageViewProduct: ImageView = itemView.
-        findViewById(R.id.imageViewProduct)
-    }
-    override fun onBindViewHolder(holder:
-                                  ProductViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
         holder.textViewName.text = product.name
         holder.textViewPrice.text = "${product.price}€"
 
-
         val fullImageUrl = Constants.SERVER_URL + product.imagePath
-        Log.v("image", "$fullImageUrl")
-
         Glide.with(context)
             .load(fullImageUrl)
-            .error(R.drawable.image_default_foreground) // Imagen de reemplazo si falla la carga
+            .error(R.drawable.image_default_foreground)
             .into(holder.imageViewProduct)
-        // Configura el evento de clic para el botón de eliminar
+
         holder.deleteButton.setOnClickListener {
             onDeleteClick(product)
         }
+
+        holder.addCartButton.setOnClickListener {
+            onAddToCartClick(product)
+        }
     }
 
-    // Devuelve el tamaño de la lista
     override fun getItemCount(): Int {
         return productList.size
     }
 
-    // Método para eliminar un producto y notificar al RecyclerView
     fun removeProduct(product: Product) {
         val position = productList.indexOf(product)
         if (position != -1) {
