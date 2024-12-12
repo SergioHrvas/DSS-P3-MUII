@@ -30,8 +30,8 @@ class CartAdapter(
         val product = cartItems[position]
         holder.productName.text = product.name
         holder.productPrice.text = "Precio: ${"%.2f".format(product.price)}€"
-        holder.productCantidad.text = "Cantidad: ${product.num}"
-        holder.productTotal.text = "Total: ${"%.2f".format(product.price * product.num)}€"
+        //holder.productCantidad.text = "Cantidad: ${product.num}"
+        //holder.productTotal.text = "Total: ${"%.2f".format(product.price * product.num)}€"
         holder.buttonRemove.setOnClickListener { removeCallback(product) }
     }
 

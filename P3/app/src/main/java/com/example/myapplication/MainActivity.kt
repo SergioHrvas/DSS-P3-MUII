@@ -50,6 +50,9 @@ class MainActivity : ComponentActivity() {
     var cookieManager = android.webkit.CookieManager.getInstance()
 
     override fun onStart() {
+        // Cargar cookie en Retrofit
+        loadCookieToRetrofit(this)
+
         fetchProductsFromApi()
         super.onStart()
 
@@ -58,7 +61,7 @@ class MainActivity : ComponentActivity() {
     fun loadCookieToRetrofit(context: Context) {
         val sharedPrefs = context.getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
         val cookieValue = sharedPrefs.getString("JSESSIONID", null)
-        println("COOKIEVALUE")
+
         if (cookieValue != null) {
             val cookie = Cookie.Builder()
                 .name("JSESSIONID")
