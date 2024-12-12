@@ -53,7 +53,8 @@ public class WebSecurityConfig {
                         mvcMatcherBuilder.pattern("/error"),
                         mvcMatcherBuilder.pattern("/favicon.ico"),
                         mvcMatcherBuilder.pattern("/api/login"),
-                        mvcMatcherBuilder.pattern("/uploads/**")
+                        mvcMatcherBuilder.pattern("/uploads/**"),
+                        mvcMatcherBuilder.pattern("src/main/resources/static/**")
                     ).permitAll()
                     .requestMatchers(mvcMatcherBuilder.pattern("/admin/**")).hasRole("ADMIN")
                     .requestMatchers(mvcMatcherBuilder.pattern("/cart/**"),mvcMatcherBuilder.pattern("/api/admin/**")).authenticated()

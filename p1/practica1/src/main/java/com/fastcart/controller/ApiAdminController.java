@@ -1,6 +1,7 @@
 package com.fastcart.controller;
 
 
+import java.awt.SystemColor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,6 +52,7 @@ public class ApiAdminController {
 	        System.out.println("Archivo recibido: {}" + file.getOriginalFilename());
 	        // Convertir el JSON del producto a un objeto Product
 	        ObjectMapper objectMapper = new ObjectMapper();
+
 	        Product product = objectMapper.readValue(productJson, Product.class);
 
 	        // Guardar la imagen y obtener la ruta
@@ -79,11 +81,16 @@ public class ApiAdminController {
 	    if (!Files.exists(uploadPath)) {
 	        Files.createDirectories(uploadPath); // Crea el directorio si no existe
 	    }
+	    System.out.println("aaaaaaaaa");
+
+	    System.out.println(uploadPath);
 
 	    // Genera un nombre único para la imagen
 	    String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
 	    Path filePath = uploadPath.resolve(filename);
+	    System.out.println("bbbbb");
 
+	    System.out.println(filePath);
 	    // Guarda la imagen en el sistema de archivos
 	    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
