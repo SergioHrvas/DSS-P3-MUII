@@ -1,27 +1,38 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- Contenedor del Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#701780"
-        android:padding="16dp">
+        android:background="@drawable/header_gradient"
+    android:padding="16dp">
 
-        <!-- Título del Header -->
-        <TextView
-            android:id="@+id/headerTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="FASTCAR"
-            android:textColor="@android:color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+    <!-- Logo o ícono en el header -->
+    <ImageView
+        android:id="@+id/headerLogo"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="Logo"
+        android:src="@drawable/ic_menu_cart"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Título del Header -->
+    <TextView
+        android:id="@+id/headerTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FASTCAR"
+        android:textColor="@android:color/white"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/headerLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-</merge>
+    </merge>
+
