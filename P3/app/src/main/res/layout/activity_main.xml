@@ -28,48 +28,53 @@
         android:id="@+id/recyclerViewProducts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
         android:layout_weight="1"
         android:clipToPadding="false"
         android:padding="8dp" />
 
     <!-- Botón para ir al carrito -->
+
     <Button
         android:id="@+id/buttonGoToMap"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="60dp"
         android:gravity="center"
         android:text="Ir al mapa"
         app:icon="@drawable/ic_menu_mapmode" />
 
     <Button
         android:id="@+id/buttonGoToCart"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="60dp"
+        android:gravity="center"
         android:text="Ir al carrito"
-        android:gravity="center" />
+        app:icon="@drawable/ic_menu_cart" />
+
+    <!-- FloatingActionButton para agregar producto -->
 
     <Button
         android:id="@+id/buttonLogin"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="60dp"
+        android:gravity="center"
         android:text="Iniciar Sesión"
-        android:gravity="center" />
-
-    <!-- FloatingActionButton para agregar producto -->
+        app:icon="@drawable/ic_menu_login" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddProduct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="Agregar Producto"
-        android:src="@drawable/ic_add"
+        android:layout_gravity="end|bottom"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/colorAccent"
+        android:contentDescription="Agregar Producto"
         android:elevation="8dp"
-        android:layout_gravity="end|bottom" />
+        android:src="@drawable/ic_add" />
 
 </LinearLayout>
 

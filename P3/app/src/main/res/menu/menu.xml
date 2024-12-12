@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_map"
+        android:title="Ir al mapa"
+        android:icon="@drawable/ic_menu_mapmode" />
+
+    <item
+        android:id="@+id/menu_cart"
+        android:title="Ir al carrito"
+        android:icon="@drawable/ic_menu_cart" />
+
+    <item
+        android:id="@+id/menu_login"
+        android:title="Iniciar sesión"
+        android:icon="@drawable/ic_menu_login" />
+</menu>

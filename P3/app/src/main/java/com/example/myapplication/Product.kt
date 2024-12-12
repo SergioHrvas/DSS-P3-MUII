@@ -5,7 +5,7 @@ data class Product(
     val name: String,
     val price: Double,
     val imagePath: String,
-    val num: Long =0
+    //val num: Long =0
 ) {
     // Secondary constructor that only takes 'name' and 'price'
     constructor(name: String, price: Double, imagePath: String) : this(0, name, price, imagePath) {

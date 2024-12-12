@@ -26,6 +26,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
 import okhttp3.Cookie
 import okhttp3.HttpUrl
@@ -48,7 +49,6 @@ class MainActivity : ComponentActivity() {
 
     var cookieManager = android.webkit.CookieManager.getInstance()
 
-
     override fun onStart() {
         fetchProductsFromApi()
         super.onStart()
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
             val cookie = Cookie.Builder()
                 .name("JSESSIONID")
                 .value(cookieValue)
-                .domain("10.0.2.2")
+                .domain("192.168.1.143")
                 .path("/")
                 .build()
             RetrofitClient.cookieJar.saveFromResponse(
@@ -75,23 +75,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("ccccc")
         // Establecer el layout
         setContentView(R.layout.activity_main)
-        println("Aaaa")
         // Cargar cookie en Retrofit
         loadCookieToRetrofit(this)
-        println("bbbbbb")
 
-        // Verificar si la cookie existe
         // Guardar la cookie en SharedPreferences
         val sharedPrefs = getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
-        println("sharedPrefs: $sharedPrefs")
         val cookieValue = sharedPrefs.getString("JSESSIONID", null)
-        println("cookieValue: $cookieValue")
 
         val editor = sharedPrefs.edit()
-        println("editor: $editor")
 
         editor.putString("JSESSIONID", cookieValue)
         editor.apply()
@@ -206,8 +199,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun deleteProductFromApi(product: Product) {
-        val apiService = ApiClient.createService(ApiService::class.java)
-        apiService.deleteProduct(product.id).enqueue(object : Callback<Boolean> {
+        RetrofitClient.apiService.deleteProduct(product.id).enqueue(object : Callback<Boolean> {
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                 if (response.isSuccessful) {
                     productAdapter.removeProduct(product) // Eliminamos el producto del adaptador

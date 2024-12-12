@@ -172,10 +172,7 @@ class NewProductActivity : ComponentActivity() {
         val imageRequestBody = image.asRequestBody("image/*".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("file", image.name, imageRequestBody)
 
-        Log.v("DATOS:", "${productPart}")
-        Log.v("IMAGEPART:", "${imagePart}")
-
-        apiService.createProduct(productPart, imagePart).enqueue(object : Callback<Product> {
+        RetrofitClient.apiService.createProduct(productPart, imagePart).enqueue(object : Callback<Product> {
             override fun onResponse(call: Call<Product>, response: Response<Product>) {
                 Log.v("API_RESPONSE", "$response")
                 if (response.isSuccessful) {
