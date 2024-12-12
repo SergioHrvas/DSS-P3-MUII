@@ -178,9 +178,14 @@ class NewProductActivity : ComponentActivity() {
                 if (response.isSuccessful) {
                     val data = response.body()
                     Log.v("API_RESPONSE", "${data}")
+
+
                 } else {
                     Log.e("API_RESPONSE", "Error: ${response.code()}")
                 }
+                // Redirigir al MainActivity
+                setResult(RESULT_OK, null)
+                finish()
             }
 
             override fun onFailure(call: Call<Product>, t: Throwable) {

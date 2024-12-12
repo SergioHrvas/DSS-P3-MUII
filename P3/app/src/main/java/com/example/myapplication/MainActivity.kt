@@ -3,58 +3,45 @@ package com.example.myapplication
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import okhttp3.Cookie
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.example.myapplication.ApiService;
-import android.widget.Button
-import android.util.Log;
-import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.preference.PreferenceManager
-import okhttp3.Cookie
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.osmdroid.config.Configuration
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
     private val ADD_PRODUCT_REQUEST_CODE = 1
 
-    private val addProductLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            // Si el resultado es OK, actualizar la lista de productos
-            fetchProductsFromApi() // Actualizar la lista de productos
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            println("ACTUALIZOOOOOOOOOOOOOOOO")
+            val refresh = Intent(
+                this,
+                MainActivity::class.java
+            )
+            startActivity(refresh)
+            this.finish()
         }
     }
-
     var cookieManager = android.webkit.CookieManager.getInstance()
 
     override fun onStart() {
-        // Cargar cookie en Retrofit
-        loadCookieToRetrofit(this)
-
-        fetchProductsFromApi()
         super.onStart()
+
+        Log.v("aa", "bb")
+        fetchProductsFromApi()
 
     }
 
@@ -136,7 +123,8 @@ class MainActivity : ComponentActivity() {
         val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
         fab.setOnClickListener {
             val intent = Intent(this, NewProductActivity::class.java)
-            addProductLauncher.launch(intent)
+            //addProductLauncher.launch(intent)
+            startActivityForResult(intent, 1);
         }
 
         fetchProductsFromApi() // Llama a la API después de la configuración

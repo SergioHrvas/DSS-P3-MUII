@@ -39,6 +39,7 @@ class ProductAdapter(
         holder.textViewPrice.text = "${product.price}€"
 
         val fullImageUrl = Constants.SERVER_URL + product.imagePath
+        println(fullImageUrl)
         Glide.with(context)
             .load(fullImageUrl)
             .error(R.drawable.image_default_foreground)
