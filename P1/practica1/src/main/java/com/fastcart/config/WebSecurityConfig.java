@@ -1,0 +1,101 @@
+package com.fastcart.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import com.fastcart.service.impl.UserDetailsServiceImpl;
+
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+    private final UserDetailsServiceImpl userDetailsService;
+
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+    
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector, AuthenticationManager authenticationManager) throws Exception {
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+
+        http
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.disable())) // Permitir iframes (para H2)
+            .authorizeHttpRequests(authorize -> 
+                authorize
+                    .requestMatchers(toH2Console()).permitAll()
+                    .requestMatchers(
+                        mvcMatcherBuilder.pattern("/"),
+                        mvcMatcherBuilder.pattern("/index.html"),
+                        mvcMatcherBuilder.pattern("/h2-console/**"),
+                        mvcMatcherBuilder.pattern("/css/**"),
+                        mvcMatcherBuilder.pattern("/products"),
+                        mvcMatcherBuilder.pattern("/user/register"),
+                        mvcMatcherBuilder.pattern("/register"),
+                        mvcMatcherBuilder.pattern("/error"),
+                        mvcMatcherBuilder.pattern("/favicon.ico"),
+                        mvcMatcherBuilder.pattern("/api/login"),
+                        mvcMatcherBuilder.pattern("/uploads/**")
+                    ).permitAll()
+                    .requestMatchers(mvcMatcherBuilder.pattern("/admin/**")).hasRole("ADMIN")
+                    .requestMatchers(mvcMatcherBuilder.pattern("/cart/**"),mvcMatcherBuilder.pattern("/api/admin/**")).authenticated()
+                    .anyRequest().authenticated()) // Requiere autenticación para todo lo demás
+            .formLogin()
+            .disable()  // Desactiva el formulario de login predeterminado de Spring Security
+            .addFilterBefore(customApiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
+            .logout(logout -> logout.permitAll())
+            .csrf(csrf -> csrf.disable()) // CSRF desactivado para simplificar desarrollo
+            ;
+        	
+	        http.sessionManagement()
+	        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS); // Asegura que se cree la sesión si es necesario
+        return http.build();
+    }
+    
+    @Bean
+    public SecurityContextRepository securityContextRepository() {
+        return new HttpSessionSecurityContextRepository();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public CustomApiLoginFilter customApiLoginFilter(AuthenticationManager authenticationManager) {
+        return new CustomApiLoginFilter(authenticationManager);
+    }
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+}
