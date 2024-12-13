@@ -52,6 +52,7 @@ class ProductAdapter(
         holder.addCartButton.setOnClickListener {
             onAddToCartClick(product)
         }
+
     }
 
     override fun getItemCount(): Int {

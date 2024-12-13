@@ -22,6 +22,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
     private val ADD_PRODUCT_REQUEST_CODE = 1
+    private lateinit var productList: MutableList<Product>
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -37,12 +39,10 @@ class MainActivity : ComponentActivity() {
     }
     var cookieManager = android.webkit.CookieManager.getInstance()
 
-    override fun onStart() {
-        super.onStart()
-
-        Log.v("aa", "bb")
+    override fun onResume() {
+        super.onResume()
+        // Refrescar la lista de productos
         fetchProductsFromApi()
-
     }
 
     fun loadCookieToRetrofit(context: Context) {
@@ -69,6 +69,20 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
         // Cargar cookie en Retrofit
         loadCookieToRetrofit(this)
+
+        productList = mutableListOf()
+        productAdapter = ProductAdapter(
+            this,
+            productList,
+            onDeleteClick = { product -> deleteProductFromApi(product) },
+            onAddToCartClick = { product -> addProductToCart(product) }
+        )
+
+
+        // Vincula el RecyclerView
+        recyclerView = findViewById(R.id.recyclerViewProducts)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = productAdapter
 
         // Guardar la cookie en SharedPreferences
         val sharedPrefs = getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
@@ -143,20 +157,22 @@ class MainActivity : ComponentActivity() {
         RetrofitClient.apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
             override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
                 if (response.isSuccessful) {
-                    response.body()?.let { productList ->
+                    response.body()?.let { fetchedProducts ->
 
-                        // Ahora el adapter incluye el callback onAddToCartClick
-                        productAdapter = ProductAdapter(
-                            this@MainActivity,
-                            productList.toMutableList(),
-                            onDeleteClick = { product ->
-                                deleteProductFromApi(product)
-                            },
-                            onAddToCartClick = { product ->
-                                addProductToCart(product)
+                        if (!recyclerView.isComputingLayout) {
+                            productList.clear()
+                            productList.addAll(fetchedProducts)
+                            productAdapter.notifyDataSetChanged()
+                        } else {
+                            recyclerView.post {
+                                productList.clear()
+                                productList.addAll(fetchedProducts)
+                                productAdapter.notifyDataSetChanged()
                             }
-                        )
-                        recyclerView.adapter = productAdapter
+                        }
+
+                        Log.d("API_RESPONSE", "Productos cargados con éxito (${response.code()})")
+
                     }
                 } else {
                     Log.e("API_RESPONSE", "Error: ${response.code()}")
