@@ -1,15 +1,22 @@
 package com.example.myapplication
 
+import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Window
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.Cookie
@@ -18,17 +25,18 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var productAdapter: ProductAdapter
     private val ADD_PRODUCT_REQUEST_CODE = 1
     private lateinit var productList: MutableList<Product>
 
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
-            println("ACTUALIZOOOOOOOOOOOOOOOO")
             val refresh = Intent(
                 this,
                 MainActivity::class.java
@@ -63,12 +71,75 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Establecer el layout
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+
         setContentView(R.layout.activity_main)
         // Cargar cookie en Retrofit
         loadCookieToRetrofit(this)
+
+        // Configurar el DrawerLayout y la Toolbar
+        drawerLayout = findViewById(R.id.drawer_layout)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        // Configurar el ActionBarDrawerToggle
+        drawerToggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+
+        // Sincronizar el estado del Drawer con el ActionBarDrawerToggle
+        drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+
+// Configurar NavigationView
+        val navigationView: NavigationView = findViewById(R.id.navigation_view)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_map -> {
+                    // Navegar al mapa
+                    val intent = Intent(this, MapActivity::class.java) // Cambia MapActivity por el nombre de tu actividad
+                    startActivity(intent)
+                }
+                R.id.menu_cart -> {
+                    // Navegar al carrito
+                    val intent = Intent(this, CartActivity::class.java) // Cambia CartActivity por el nombre de tu actividad
+                    startActivity(intent)
+                }
+                R.id.menu_login -> {
+                    // Navegar al login
+                    val intent = Intent(this, LoginActivity::class.java) // Cambia LoginActivity por el nombre de tu actividad
+                    startActivity(intent)
+                }
+            }
+            // Cerrar el Drawer
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+
+
+        // Configurar ActionBarDrawerToggle
+        val toggle = androidx.appcompat.app.ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
 
         productList = mutableListOf()
         productAdapter = ProductAdapter(
@@ -109,29 +180,9 @@ class MainActivity : ComponentActivity() {
         // Configurar RecyclerView
         recyclerView = findViewById(R.id.recyclerViewProducts)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
-        headerTitle.text = "${headerTitle.text} - Lista de productos"  // Asegúrate de que headerTitle existe en el layout
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Botón para ir al carrito
-        val buttonGoToCart = findViewById<Button>(R.id.buttonGoToCart)
-        buttonGoToCart.setOnClickListener {
-            val intent = Intent(this, CartActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Botón para ir al mapa
-        val buttonGoToMap = findViewById<Button>(R.id.buttonGoToMap)
-        buttonGoToMap.setOnClickListener {
-            val intent = Intent(this, MapActivity::class.java)
-            startActivity(intent)
-        }
-
-        val buttonLogin = findViewById<Button>(R.id.buttonLogin)
-        buttonLogin.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
 
         // FloatingActionButton para añadir productos
         val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)

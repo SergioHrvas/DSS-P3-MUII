@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
+        android:background="#6DBFFF"
         android:gravity="center_vertical">
 
         <!-- Imagen del producto -->
@@ -54,18 +55,14 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <com.google.android.material.button.MaterialButton
+                <ImageButton
                     android:id="@+id/addCartButton"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AÑADIR"
-                    android:textAllCaps="false"
-                    app:cornerRadius="12dp"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
-                    android:textColor="@android:color/white"
-                    app:backgroundTint="@color/colorPrimary" />
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="addCart"
+                    android:src="@drawable/ic_menu_cart"
+                    android:scaleType="fitCenter" /> <!-- Ajusta la imagen para que se mantenga proporcional dentro del ImageButton -->
 
                 <ImageButton
                     android:id="@+id/deleteButton"

@@ -1,38 +1,45 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Toolbar personalizada con el título y el logo -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/header_gradient"
-    android:padding="16dp">
+        android:background="#2A2E3D"
+        android:gravity="center"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-    <!-- Logo o ícono en el header -->
-    <ImageView
-        android:id="@+id/headerLogo"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:contentDescription="Logo"
-        android:src="@drawable/ic_menu_cart"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent" />
+        <!-- Layout para contener el título y el logo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-    <!-- Título del Header -->
-    <TextView
-        android:id="@+id/headerTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="FASTCAR"
-        android:textColor="@android:color/white"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/headerLogo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Título centrado en la Toolbar -->
+            <TextView
+                android:id="@+id/headerTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="FASTCAR"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-    </merge>
+            <!-- Logo pegado a la derecha -->
+            <ImageView
+                android:id="@+id/headerLogo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Logo"
+                android:src="@mipmap/ic_launcher" />
+        </LinearLayout>
 
+    </androidx.appcompat.widget.Toolbar>
+
+</merge>

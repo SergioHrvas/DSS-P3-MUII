@@ -23,7 +23,7 @@ class ProductAdapter(
         val textViewName: TextView = itemView.findViewById(R.id.productName)
         val textViewPrice: TextView = itemView.findViewById(R.id.productPrice)
         val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
-        val addCartButton: Button = itemView.findViewById(R.id.addCartButton) // Asegúrate de tener este botón en el layout
+        val addCartButton: ImageButton = itemView.findViewById(R.id.addCartButton) // Asegúrate de tener este botón en el layout
         val imageViewProduct: ImageView = itemView.findViewById(R.id.imageViewProduct)
     }
 

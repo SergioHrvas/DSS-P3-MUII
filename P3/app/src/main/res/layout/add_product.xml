@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/background_gradient">
+    android:background="@color/colorSecondary"
+    android:orientation="vertical">
 
     <!-- Incluir el Header -->
     <include
@@ -19,13 +18,15 @@
         android:id="@+id/headerDivider2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/background_gradient">
+        android:background="#1E76D0"
+        android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -38,48 +39,27 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="2dp"
-                android:src="@drawable/sample_image"/>
+                android:src="@drawable/sample_image" />
             <!-- Botón para seleccionar imagen -->
             <Button
                 android:id="@+id/btnSelectImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cargar imagen"
+                android:layout_gravity="center"
                 android:layout_marginTop="4dp"
-                android:layout_gravity="center" />
+                android:backgroundTint="@color/button_back"
+                android:text="Cargar imagen" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/background_gradient">
-        <!-- Campo para el Nombre -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputLayoutName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="10dp"
-            app:hintEnabled="false"
-            app:boxStrokeWidth="2dp"
-            app:boxStrokeColor="@color/design_default_color_primary"
-            app:boxBackgroundMode="filled">
-
-            <EditText
-                android:id="@+id/editTextName"
-                android:layout_width="234dp"
-                android:layout_height="wrap_content"
-                android:hint="Nombre"
-                android:inputType="text"
-                android:textColor="@color/white"
-                android:textColorHint="@android:color/darker_gray" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <!-- Campo para el Precio -->
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp">
+            <!-- Campo para el Nombre -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/inputLayoutPrice"
-                android:layout_width="249dp"
+                android:id="@+id/inputLayoutName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:paddingHorizontal="10dp"
@@ -89,14 +69,38 @@
                 app:hintEnabled="false">
 
                 <EditText
-                    android:id="@+id/editTextPrice"
+                    android:id="@+id/editTextName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Precio"
-                    android:inputType="numberDecimal"
+                    android:hint="Nombre"
+                    android:inputType="text"
                     android:textColor="@color/white"
                     android:textColorHint="@android:color/darker_gray" />
             </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- Campo para el Precio -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayoutPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="10dp"
+                app:boxBackgroundMode="filled"
+                app:boxStrokeColor="@color/design_default_color_primary"
+                app:boxStrokeWidth="2dp"
+                app:hintEnabled="false">
+
+                <EditText
+                android:id="@+id/editTextPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio"
+                android:inputType="numberDecimal"
+                android:textColor="@color/white"
+                android:textColorHint="@android:color/darker_gray" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
     </LinearLayout>
 
@@ -106,7 +110,8 @@
         android:id="@+id/btnNewProduct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Crear Producto"
+        android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:layout_gravity="center" />
+        android:backgroundTint="@color/button_back"
+        android:text="Crear Producto" />
 </LinearLayout>
