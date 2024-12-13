@@ -13,61 +13,90 @@
         android:id="@+id/recyclerViewCart"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:padding="16dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/buttonBack" />
-
-    <!-- Botón para regresar -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonBack"
-        android:layout_width="115dp"
-        android:layout_height="55dp"
-        android:layout_margin="16dp"
-        android:text="Regresar"
-        app:backgroundTint="@color/colorAccent"
-        app:iconGravity="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/textViewTotalPrice" />
 
     <!-- TextView para mostrar el precio total -->
-
     <TextView
         android:id="@+id/textViewTotalPrice"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="18dp"
-        android:layout_marginBottom="16dp"
-        android:text="Precio final : 0.00$"
-        android:textColor="@android:color/white"
+        android:text="Precio final: 0.00$"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/buttonBack" />
-
-    <Button
-        android:id="@+id/buttonCheckout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="22dp"
-        android:background="@drawable/button_green_background"
-        android:text="Pagar"
-        android:textColor="#FFFFFF"
-        android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="16dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonGroup"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/buttonClearCart"
-        android:layout_width="wrap_content"
+    <!-- Grupo de Botones -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buttonGroup"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="8dp"
-        android:text="Vacia el carro"
-        app:layout_constraintBottom_toTopOf="@+id/textViewTotalPrice"
-        app:layout_constraintEnd_toStartOf="@+id/buttonCheckout" />
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Botón Regresar -->
+        <Button
+            android:id="@+id/buttonBack"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/button_back"
+            android:drawableLeft="@drawable/ic_back"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:padding="12dp"
+            android:text="Regresar"
+            android:textColor="@color/button_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonClearCart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.3" />
+
+        <!-- Botón Vaciar el Carro -->
+        <Button
+            android:id="@+id/buttonClearCart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/button_clear_cart"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="Vaciar Carro"
+            android:textColor="@color/button_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCheckout"
+            app:layout_constraintStart_toEndOf="@id/buttonBack"
+            app:layout_constraintWidth_percent="0.3" />
+
+        <!-- Botón Pagar -->
+        <Button
+            android:id="@+id/buttonCheckout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="15dp"
+            android:background="@color/button_checkout"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="Pagar"
+            android:textColor="@color/button_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/buttonClearCart"
+            app:layout_constraintWidth_percent="0.3" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

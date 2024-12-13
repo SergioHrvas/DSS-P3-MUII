@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/background_gradient">
+    android:background="@drawable/background_gradient"
+    android:padding="16dp">
 
-    <!-- Incluir el Header -->
-
+    <!-- Header -->
     <include
         android:id="@+id/includeHeader"
         layout="@layout/header"
@@ -20,61 +20,56 @@
         android:id="@+id/headerDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        android:layout_marginTop="8dp" />
+        android:layout_marginVertical="8dp"
+        android:background="#FFFFFFFF" />
 
     <!-- RecyclerView para mostrar productos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProducts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
         android:layout_weight="1"
-        android:clipToPadding="false"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:clipToPadding="false" />
 
-    <!-- Botón para ir al carrito -->
-
-    <Button
+    <!-- Botón para ir al mapa -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonGoToMap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="60dp"
-        android:gravity="center"
         android:text="Ir al mapa"
-        app:icon="@drawable/ic_menu_mapmode" />
+        android:layout_marginVertical="8dp"
+        android:drawableStart="@drawable/ic_menu_mapmode"
+        style="?attr/materialButtonStyle" />
 
-    <Button
+    <!-- Botón para ir al carrito -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonGoToCart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="60dp"
-        android:gravity="center"
         android:text="Ir al carrito"
-        app:icon="@drawable/ic_menu_cart" />
+        android:layout_marginVertical="8dp"
+        android:drawableStart="@drawable/ic_menu_cart"
+        style="?attr/materialButtonStyle" />
 
-    <!-- FloatingActionButton para agregar producto -->
-
-    <Button
+    <!-- Botón para iniciar sesión -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="60dp"
-        android:gravity="center"
         android:text="Iniciar Sesión"
-        app:icon="@drawable/ic_menu_login" />
+        android:layout_marginVertical="8dp"
+        android:drawableStart="@drawable/ic_menu_login"
+        style="?attr/materialButtonStyle" />
 
+    <!-- FloatingActionButton para agregar producto -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddProduct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/colorAccent"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="end"
+        app:backgroundTint="@color/colorAccent"
         android:contentDescription="Agregar Producto"
-        android:elevation="8dp"
         android:src="@drawable/ic_add" />
-
 </LinearLayout>
-
