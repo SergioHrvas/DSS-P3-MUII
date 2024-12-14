@@ -24,7 +24,7 @@ class CheckoutActivity : AppCompatActivity() {
     private lateinit var buttonConfirm: Button
     private lateinit var progressBar: ProgressBar
 
-    private var cartItems = mutableListOf<Product>()
+    private var cartItems = mutableListOf<CartProduct>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,9 +85,9 @@ class CheckoutActivity : AppCompatActivity() {
                 showLoading(false)
                 if (response.isSuccessful) {
                     val orderResponse = response.body()
-                    if (orderResponse?.success == true) {
+                    if (orderResponse?.status == "true") {
                         // Orden creada con éxito
-                        Toast.makeText(this@CheckoutActivity, "Compra realizada con éxito. Orden ID: ${orderResponse.orderId}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@CheckoutActivity, "Compra realizada con éxito. Orden ID: ${orderResponse.id}", Toast.LENGTH_LONG).show()
                         clearCart()
                         finish() // o redirige a otra pantalla
                     } else {
