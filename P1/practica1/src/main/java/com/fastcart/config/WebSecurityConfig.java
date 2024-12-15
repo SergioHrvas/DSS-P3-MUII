@@ -53,14 +53,13 @@ public class WebSecurityConfig {
                         mvcMatcherBuilder.pattern("/error"),
                         mvcMatcherBuilder.pattern("/favicon.ico"),
                         mvcMatcherBuilder.pattern("/api/login"),
-                        mvcMatcherBuilder.pattern("/uploads/**")
+                        mvcMatcherBuilder.pattern("/uploads/**"),
+                        mvcMatcherBuilder.pattern("/api/products")
                     ).permitAll()
                     .requestMatchers(mvcMatcherBuilder.pattern("/admin/**")).hasRole("ADMIN")
                     .requestMatchers(mvcMatcherBuilder.pattern("/cart/**"),mvcMatcherBuilder.pattern("/api/admin/**")).authenticated()
                     .anyRequest().authenticated()) // Requiere autenticación para todo lo demás
-            .formLogin()
-            .disable()  // Desactiva el formulario de login predeterminado de Spring Security
-            .addFilterBefore(customApiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
+            .formLogin(formLogin -> formLogin.loginPage("/login").defaultSuccessUrl("/index.html", true).permitAll()).addFilterBefore(customApiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
             .logout(logout -> logout.permitAll())
             .csrf(csrf -> csrf.disable()) // CSRF desactivado para simplificar desarrollo
             ;
