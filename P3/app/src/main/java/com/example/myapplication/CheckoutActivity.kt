@@ -24,7 +24,7 @@ class CheckoutActivity : AppCompatActivity() {
     private lateinit var buttonConfirm: Button
     private lateinit var progressBar: ProgressBar
 
-    private var cartItems = mutableListOf<CartProduct>()
+    private var cartItems = mutableListOf<Product>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +55,6 @@ class CheckoutActivity : AppCompatActivity() {
             textViewTotal.text = "Total: $0.00"
             buttonConfirm.isEnabled = false
         } else {
-            // Muestra la lista de productos (puedes formatearlos como quieras)
             val summary = cartItems.joinToString("\n") { "${it.name} - $${it.price}" }
             textViewSummary.text = summary
 
@@ -71,7 +70,6 @@ class CheckoutActivity : AppCompatActivity() {
             return
         }
 
-        // Crea el objeto OrderRequest
         val totalPrice = cartItems.sumOf { it.price }
         val orderRequest = OrderRequest(
             products = cartItems,
@@ -86,16 +84,16 @@ class CheckoutActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val orderResponse = response.body()
                     if (orderResponse?.status == "true") {
-                        // Orden creada con éxito
+                        // Compra exitosa
                         Toast.makeText(this@CheckoutActivity, "Compra realizada con éxito. Orden ID: ${orderResponse.id}", Toast.LENGTH_LONG).show()
                         clearCart()
-                        finish() // o redirige a otra pantalla
+                        finish()
                     } else {
-                        // Hubo algún error lógico en la creación de la orden
+                        // Error lógico
                         Toast.makeText(this@CheckoutActivity, "Error al procesar la compra: ${orderResponse?.message ?: "Desconocido"}", Toast.LENGTH_LONG).show()
                     }
                 } else {
-                    // Error HTTP (404, 500, etc.)
+                    // Error HTTP
                     Toast.makeText(this@CheckoutActivity, "Error del servidor: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }

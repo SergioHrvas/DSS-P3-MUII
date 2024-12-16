@@ -20,7 +20,6 @@ class CartActivity : AppCompatActivity() {
 
     private var cartItems = mutableListOf<Product>()
 
-    // Misma clave y nombre de SharedPreferences que en MainActivity
     private val PREFS_NAME = "CartPrefs"
     private val CART_KEY = "cart_items"
 
@@ -34,12 +33,13 @@ class CartActivity : AppCompatActivity() {
         buttonBack = findViewById(R.id.buttonBack)
         buttonCheckout = findViewById(R.id.buttonCheckout)
         buttonClearCart = findViewById(R.id.buttonClearCart)
+
         // Configurar RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
         cartAdapter = CartAdapter(cartItems, this::removeFromCart)
         recyclerView.adapter = cartAdapter
 
-        // Cargar elementos del carrito
+        // Cargar elementos del carrito la primera vez
         loadCartItems()
 
         // Botón para regresar
@@ -49,11 +49,18 @@ class CartActivity : AppCompatActivity() {
         buttonClearCart.setOnClickListener {
             clearCart()
         }
-        // Botón para proceder al pago (ejemplo: solo limpia el carrito local)
+
+        // Botón para proceder al pago
         buttonCheckout.setOnClickListener {
             val intent = Intent(this, CheckoutActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Al volver a esta actividad, recargamos el carrito por si se vació en CheckoutActivity
+        loadCartItems()
     }
 
     private fun loadCartItems() {
