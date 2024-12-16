@@ -8,6 +8,7 @@ import retrofit2.http.Path
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.Part
 
@@ -51,5 +52,13 @@ interface ApiService {
     fun loginUser(
         @Body request: User
     ): Call<LoginResponse>
+
+    data class SessionVerificationResponse(
+        val valid: Boolean
+    )
+
+    @GET("verify-session")
+    fun verifySession(@Header("Cookie") sessionId: String): Call<SessionVerificationResponse>
+
 
 }

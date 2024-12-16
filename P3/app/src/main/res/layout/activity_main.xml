@@ -41,7 +41,7 @@
             android:layout_margin="16dp"
             android:contentDescription="Agregar Producto"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/colorAccent" />
+            app:backgroundTint="@color/button_text" />
     </LinearLayout>
 
     <!-- Menú lateral (NavigationView) -->

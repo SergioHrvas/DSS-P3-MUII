@@ -100,16 +100,11 @@ class LoginActivity : ComponentActivity() {
         })
     }
 
-    fun saveCookieLocally(context: Context) {
+    fun saveCookieLocally(context: Context, role: String) {
         val sessionCookie = RetrofitClient.getCookie("JSESSIONID")
-        println("1111")
-
         val sharedPrefs = context.getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
-        println("2222")
-
         sharedPrefs.edit().putString("JSESSIONID", sessionCookie).apply()
-        println("3333")
-
+        sharedPrefs.edit().putString("ROLE", role).apply()
     }
 
     private fun login(name: String, password: String) {
@@ -125,15 +120,9 @@ class LoginActivity : ComponentActivity() {
                     val data = response.body()
                     Log.v("API_RESPONSE", "Login Data: $data")
 
-                    // Guardar cookie localmente
-                    if (data != null) {
-                        println(data.sessionId)
-                    }
-
-
                     val sessionCookie = data?.sessionId
                     if (sessionCookie != null) {
-                        saveCookieLocally(applicationContext)
+                        saveCookieLocally(applicationContext, data.role)
                         Log.v("API_RESPONSE", "Cookie guardada: $sessionCookie")
 
                         // Redirigir al MainActivity

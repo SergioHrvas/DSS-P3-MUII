@@ -13,4 +13,9 @@
         android:id="@+id/menu_login"
         android:title="Iniciar sesión"
         android:icon="@drawable/ic_menu_login" />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:title="Cerrar sesión"
+        android:icon="@drawable/ic_menu_logout" />
 </menu>

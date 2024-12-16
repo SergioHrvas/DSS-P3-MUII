@@ -159,8 +159,6 @@ class NewProductActivity : ComponentActivity() {
     }
 
     private fun createProduct(name: String, price: Double, image: File) {
-        val apiService = ApiClient.createService(ApiService::class.java)
-
         val product = Product(name, price, "")
 
         val gson = Gson()
@@ -178,14 +176,15 @@ class NewProductActivity : ComponentActivity() {
                 if (response.isSuccessful) {
                     val data = response.body()
                     Log.v("API_RESPONSE", "${data}")
-
-
+                    val intent = Intent()
+                    intent.putExtra("product_saved", true)
+                    setResult(RESULT_OK, intent)
+                    finish()
                 } else {
                     Log.e("API_RESPONSE", "Error: ${response.code()}")
+
                 }
-                // Redirigir al MainActivity
-                setResult(RESULT_OK, null)
-                finish()
+
             }
 
             override fun onFailure(call: Call<Product>, t: Throwable) {

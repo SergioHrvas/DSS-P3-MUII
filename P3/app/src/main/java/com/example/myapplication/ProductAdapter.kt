@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ProductAdapter(
     private val context: Context,
@@ -45,6 +47,18 @@ class ProductAdapter(
             .error(R.drawable.image_default_foreground)
             .into(holder.imageViewProduct)
 
+
+        val sharedPrefs = context.getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
+        val roleValue = sharedPrefs.getString("ROLE", null)
+
+        if(roleValue == "ROLE_ADMIN"){
+            holder.deleteButton.visibility = View.VISIBLE
+            // FloatingActionButton para añadir productos
+
+        }
+        else{
+            holder.deleteButton.visibility = View.GONE
+        }
         holder.deleteButton.setOnClickListener {
             onDeleteClick(product)
         }
