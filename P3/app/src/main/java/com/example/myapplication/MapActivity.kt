@@ -11,7 +11,12 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import android.Manifest
+import android.os.Looper
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import java.io.Serializable
 
 class MapActivity : AppCompatActivity() {
@@ -87,33 +92,59 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateMarker(userLocation: GeoPoint) {
+        if (userMarker != null) {
+            mapView.overlays.remove(userMarker)
+        }
+
+        userMarker = Marker(mapView).apply {
+            position = userLocation
+            title = "Tu ubicación"
+        }
+        mapView.overlays.add(userMarker)
+    }
+
     private fun getUserLocation() {
-        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
             return
         }
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1f) { location ->
-            val userLocation = GeoPoint(location.latitude, location.longitude)
-
-            // Centra el mapa solo la primera vez o si el usuario cambia de ubicación
-            mapView.controller.setCenter(userLocation)
-
-            // Si ya existe un marcador, lo eliminamos antes de añadir uno nuevo
-            if (userMarker != null) {
-                mapView.overlays.remove(userMarker)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    val userLocation = GeoPoint(location.latitude, location.longitude)
+                    mapView.controller.setCenter(userLocation)
+                    updateMarker(userLocation)
+                }
             }
 
-            // Crear un nuevo marcador o actualizar el existente
-            userMarker = Marker(mapView).apply {
-                position = userLocation
-                title = "Tu ubicación"
-            }
-
-            // Agregar el marcador al mapa
-            mapView.overlays.add(userMarker)
+        val locationRequest = LocationRequest.create().apply {
+            interval = 1000
+            fastestInterval = 500
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location in locationResult.locations) {
+                    val userLocation = GeoPoint(location.latitude, location.longitude)
+                    mapView.controller.setCenter(userLocation)
+                    updateMarker(userLocation)
+                }
+            }
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+
     }
 
 
