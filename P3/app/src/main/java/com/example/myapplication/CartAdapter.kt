@@ -16,7 +16,7 @@ class CartAdapter(
         val productName: TextView = view.findViewById(R.id.productName)
         val productPrice: TextView = view.findViewById(R.id.productPrice)
         val productCantidad: TextView = view.findViewById(R.id.productCantidad)
-        val productTotal: TextView = view.findViewById(R.id.productTotal)
+       //val productTotal: TextView = view.findViewById(R.id.productTotal)
         val buttonRemove: Button = view.findViewById(R.id.buttonRemove)
     }
 

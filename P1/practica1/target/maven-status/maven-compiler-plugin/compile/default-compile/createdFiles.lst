@@ -3,10 +3,8 @@ com\fastcart\repository\OrderRepo.class
 com\fastcart\model\Order.class
 com\fastcart\service\impl\CartServiceImpl.class
 com\fastcart\service\impl\OrderServiceImpl.class
-com\fastcart\config\WebSecurityConfig.class
 com\fastcart\service\impl\UserDetailsServiceImpl.class
 com\fastcart\service\interf\UserService.class
-com\fastcart\config\CustomAuthenticationEntryPoint.class
 com\fastcart\config\CustomApiLoginFilter.class
 com\fastcart\controller\ApiCartController.class
 com\fastcart\controller\AdminController.class
