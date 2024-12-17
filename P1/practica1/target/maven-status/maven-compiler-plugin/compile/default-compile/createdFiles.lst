@@ -6,10 +6,12 @@ com\fastcart\service\impl\OrderServiceImpl.class
 com\fastcart\config\WebSecurityConfig.class
 com\fastcart\service\impl\UserDetailsServiceImpl.class
 com\fastcart\service\interf\UserService.class
+com\fastcart\config\CustomAuthenticationEntryPoint.class
 com\fastcart\config\CustomApiLoginFilter.class
 com\fastcart\controller\ApiCartController.class
 com\fastcart\controller\AdminController.class
 com\fastcart\service\impl\ProductServiceImpl.class
+com\fastcart\controller\ApiSessionController.class
 com\fastcart\dto\CartItemDto.class
 com\fastcart\model\Product.class
 com\fastcart\model\OrderResponse.class

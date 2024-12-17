@@ -56,13 +56,20 @@ public class WebSecurityConfig {
                         mvcMatcherBuilder.pattern("/uploads/**"),
                         mvcMatcherBuilder.pattern("/api/products")
                     ).permitAll()
-                    .requestMatchers(mvcMatcherBuilder.pattern("/admin/**")).hasRole("ADMIN")
-                    .requestMatchers(mvcMatcherBuilder.pattern("/cart/**"),mvcMatcherBuilder.pattern("/api/admin/**")).authenticated()
+                    .requestMatchers(mvcMatcherBuilder.pattern("/admin/**"), mvcMatcherBuilder.pattern("/api/admin/**")).hasRole("ADMIN")
+                    .requestMatchers(mvcMatcherBuilder.pattern("/cart/**")).authenticated()
                     .anyRequest().authenticated()) // Requiere autenticación para todo lo demás
-            .formLogin(formLogin -> formLogin.loginPage("/login").defaultSuccessUrl("/index.html", true).permitAll()).addFilterBefore(customApiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
-            .logout(logout -> logout.permitAll())
-            .csrf(csrf -> csrf.disable()) // CSRF desactivado para simplificar desarrollo
-            ;
+                    .formLogin(formLogin -> formLogin.loginPage("/login").defaultSuccessUrl("/index.html", true).permitAll())
+                    .logout(logout -> logout.permitAll())
+                    .exceptionHandling(exceptionHandling -> exceptionHandling
+                            .defaultAuthenticationEntryPointFor(
+                                new CustomAuthenticationEntryPoint(), 
+                                mvcMatcherBuilder.pattern("/api/**") // Aplica a todas las rutas API
+                            )
+                        )
+                    .addFilterBefore(customApiLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
+                    .csrf(csrf -> csrf.disable()) // CSRF desactivado para simplificar desarrollo
+                    ;
         	
 	        http.sessionManagement()
 	        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS); // Asegura que se cree la sesión si es necesario
