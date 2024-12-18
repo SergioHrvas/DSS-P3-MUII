@@ -1,0 +1,201 @@
+@startuml
+package com.example.myapplication {
+
+    ' ApiClient
+    class ApiClient {
+        - BASE_URL: String
+        + retrofit: Retrofit
+        + <T> createService(service: Class<T>): T
+    }
+
+    ' ApiService
+    interface ApiService {
+        + getAllProducts(): Call<List<Product>>
+        + getCartProducts(): Call<List<CartProduct>>
+        + createProduct(product: MultipartBody.Part, file: MultipartBody.Part): Call<Product>
+        + deleteProduct(id: Long): Call<Boolean>
+        + checkout(): Call<String>
+        + createOrder(orderRequest: OrderRequest): Call<OrderResponse>
+        + loginUser(request: User): Call<LoginResponse>
+        + verifySession(sessionId: String): Call<SessionVerificationResponse>
+    }
+
+    ' Data classes inside ApiService
+    class LoginResponse {
+        + sessionId: String
+        + role: String
+    }
+
+    class SessionVerificationResponse {
+        + valid: Boolean
+    }
+
+    ' CartProduct
+    class CartProduct {
+        + id: Long
+        + name: String
+        + price: Double
+        + image: String
+        + num: Int
+        + total: Double
+    }
+
+    ' CheckoutActivity
+    class CheckoutActivity {
+        - PREFS_NAME: String
+        - CART_KEY: String
+        - textViewSummary: TextView
+        - textViewTotal: TextView
+        - buttonConfirm: Button
+        - progressBar: ProgressBar
+        - cartItems: MutableList<Product>
+
+        + onCreate(savedInstanceState: Bundle): void
+        - loadCartItems(): void
+        - displayCartInfo(): void
+        - placeOrder(): void
+        - clearCart(): void
+        - showLoading(loading: Boolean): void
+    }
+
+    ' LoginActivity
+    class LoginActivity {
+        - recyclerView: RecyclerView
+        - productAdapter: ProductAdapter
+        - btnLogin: Button
+        - cookieManager: CookieManager
+        + onCreate(savedInstanceState: Bundle): void
+        - saveCookieLocally(context: Context, role: String): void
+        - login(name: String, password: String): void
+    }
+
+    ' MainActivity (agregada)
+    class MainActivity {
+        - btnViewCart: Button
+        - btnCheckout: Button
+        - recyclerView: RecyclerView
+        - productAdapter: ProductAdapter
+        + onCreate(savedInstanceState: Bundle): void
+        - displayProducts(): void
+        - openCart(): void
+        - proceedToCheckout(): void
+    }
+
+' MapActivity (agregada)
+    class MapActivity {
+        - mapView: MapView
+        - fusedLocationClient: FusedLocationProviderClient
+        - locationCallback: LocationCallback?
+        - userMarker: Marker?
+        + onCreate(savedInstanceState: Bundle): void
+        - addStoreMarkers(locations: List<Map<String, Serializable>>): void
+        - updateMarker(userLocation: GeoPoint): void
+        - getUserLocation(): void
+    }
+
+ ' NewProductActivity (añadida)
+    class NewProductActivity {
+        - recyclerView: RecyclerView
+        - productAdapter: ProductAdapter
+        - imageViewProduct: ImageView
+        - btnSelectImage: Button
+        - btnNewProduct: Button
+        - IMAGE_PICK_CODE: Int
+        - CAMERA_REQUEST_CODE: Int
+        - selectedImageUri: URI?
+        - selectedImageFile: File?
+
+        + onCreate(savedInstanceState: Bundle): void
+        - openImageChooser(): void
+        - onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): void
+        - getFilePathFromUri(uri: Uri): String
+        - createProduct(name: String, price: Double, image: File): void
+    }
+
+     ' OrderRequest (añadida)
+        class OrderRequest {
+            + products: List<Product>
+            + totalAmount: Double
+        }
+
+        ' OrderResponse (añadida)
+        class OrderResponse {
+            + status: String
+            + id: String?
+            + message: String?
+        }
+
+
+    ' Product (añadida)
+    class Product {
+        + id: Long
+        + name: String
+        + price: Double
+        + imagePath: String
+    }
+
+    ' ProductAdapter (añadida)
+    class ProductAdapter {
+        - context: Context
+        - productList: MutableList<Product>
+        - onDeleteClick: (Product) -> Unit
+        - onAddToCartClick: (Product) -> Unit
+
+        + onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder
+        + onBindViewHolder(holder: ProductViewHolder, position: Int): void
+        + getItemCount(): Int
+        + removeProduct(product: Product): void
+    }
+
+ ' User (añadida)
+    class User {
+        + username: String
+        + password: String
+    }
+
+    ' RetrofitClient (añadido)
+    object RetrofitClient {
+        - retrofit: Retrofit?
+        - cookieJar: PersistentCookieJar
+        - okHttpClient: OkHttpClient
+        + getClient(baseUrl: String): Retrofit
+        + getCookie(name: String): String?
+        + apiService: ApiService
+    }
+
+    ' Relationships
+    ApiClient o-- Retrofit
+    ApiClient --> ApiService
+    ApiService o-- LoginResponse
+    ApiService o-- SessionVerificationResponse
+    ApiService --> OrderRequest
+    ApiService --> OrderResponse
+    CheckoutActivity --> Product
+    CheckoutActivity --> CartProduct
+    CheckoutActivity --> TextView
+    CheckoutActivity --> Button
+    CheckoutActivity --> ProgressBar
+    LoginActivity --> RecyclerView
+    LoginActivity --> ProductAdapter
+    LoginActivity --> Button
+    LoginActivity --> CookieManager
+    LoginActivity --> ApiService
+    MainActivity --> Button
+    MainActivity --> RecyclerView
+    MainActivity --> ProductAdapter
+    MapActivity --> MapView
+    MapActivity --> FusedLocationProviderClient
+    MapActivity --> LocationCallback
+    MapActivity --> Marker
+    NewProductActivity --> RecyclerView
+    NewProductActivity --> ProductAdapter
+    NewProductActivity --> ImageView
+    NewProductActivity --> Button
+    NewProductActivity --> URI
+    NewProductActivity --> File
+    NewProductActivity --> Product
+    ProductAdapter --> Product
+    RetrofitClient --> ApiService
+    RetrofitClient --> PersistentCookieJar
+}
+@enduml
