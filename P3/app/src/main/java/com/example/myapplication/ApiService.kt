@@ -1,4 +1,5 @@
 package com.example.myapplication
+
 import android.view.PixelCopy.Request
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,18 +20,11 @@ interface ApiService {
     @GET("/api/products")
     fun getAllProducts(): Call<List<Product>>
 
-    //He planteado que no hace falta un objeto cart puesto que en el fondo
-    // es el mismo concepto que products solo que la disposición futura en la UI
-    //será distinta
-    @GET("/api/cart")
-    fun getCartProducts(): Call<List<CartProduct>>
-
     // Add a product (POST request example)
     @Multipart
     @POST("/api/admin/save_product")
     fun createProduct(
-        @Part product: MultipartBody.Part, // No debe tener el nombre aquí
-        @Part file: MultipartBody.Part
+        @Part product: MultipartBody.Part, @Part file: MultipartBody.Part
     ): Call<Product>
 
     @DELETE("api/admin/delete_product/{id}")
@@ -38,13 +32,6 @@ interface ApiService {
         @Path("id") id: Long
     ): Call<Boolean>
 
-    @POST("api/admin/cart/pay/")
-    fun checkout(): Call<String>
-
-    data class LoginResponse(
-        val sessionId: String,
-        val role: String
-    )
     @POST("/api/orders")
     fun createOrder(@Body orderRequest: OrderRequest): Call<OrderResponse>
 
@@ -52,10 +39,6 @@ interface ApiService {
     fun loginUser(
         @Body request: User
     ): Call<LoginResponse>
-
-    data class SessionVerificationResponse(
-        val valid: Boolean
-    )
 
     @GET("verify-session")
     fun verifySession(@Header("Cookie") sessionId: String): Call<SessionVerificationResponse>

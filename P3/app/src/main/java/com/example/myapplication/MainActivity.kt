@@ -1,6 +1,6 @@
 package com.example.myapplication
 
-import android.app.ActionBar
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -9,7 +9,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Window
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -39,8 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     fun verifySessionWithServerAsync(sessionId: String?, callback: (Boolean) -> Unit) {
-        val apiService = RetrofitClient.apiService
-        Log.v("API_RESPONSE", "$sessionId")
+        val apiService = ApiClient.apiService
 
         if (sessionId.isNullOrEmpty()) {
             callback(false)
@@ -48,25 +46,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         val call = apiService.verifySession(sessionId)
-        Log.v("API_RESPONSE", "AAAAA")
-        call.enqueue(object : Callback<ApiService.SessionVerificationResponse> {
+        call.enqueue(object : Callback<SessionVerificationResponse> {
             override fun onResponse(
-                call: Call<ApiService.SessionVerificationResponse>,
-                response: Response<ApiService.SessionVerificationResponse>
+                call: Call<SessionVerificationResponse>,
+                response: Response<SessionVerificationResponse>
             ) {
                 Log.v("API_RESPONSE", "<< ${response.body()?.valid}")
                 callback(response.body()?.valid ?: false)
             }
 
-            override fun onFailure(call: Call<ApiService.SessionVerificationResponse>, t: Throwable) {
-                Log.v("API_RESPONSE", "<< ERROR")
+            override fun onFailure(call: Call<SessionVerificationResponse>, t: Throwable) {
+                Log.v("API_RESPONSE", "ERROR")
                 callback(false)
 
             }
         })
     }
 
-    fun checkSessionAsync(context: Context) {
+    fun checkSessionAsync() {
         val sessionId = sharedPrefs.getString("JSESSIONID", null)
 
         // Llamamos a la función asincrónica para verificar la sesión
@@ -84,11 +81,7 @@ class MainActivity : AppCompatActivity() {
                 menu_login.isVisible = false
                 menu_logout.isVisible = true
 
-                Log.v("MENU_LOGOUT2", "${menu_logout.isVisible}")
-                Log.v("MENU_LOGIN2                    Log.v(\"MENU_LOGOUT1\", \"${menu_logout.isVisible}\")\n" +
-                        "                    Log.v(\"MENU_LOGIN1\", \"${menu_login.isVisible}\")\n", "${menu_login.isVisible}")
-
-                if(role == "ROLE_ADMIN"){
+                if (role == "ROLE_ADMIN") {
 
                     fab.show()
                     // FloatingActionButton para añadir productos
@@ -97,40 +90,30 @@ class MainActivity : AppCompatActivity() {
                         //addProductLauncher.launch(intent)
                         startActivityForResult(intent, 1);
                     }
-                }
-                else{
-
+                } else {
                     fab.hide()
                 }
             } else {
-                // Si la sesión no es válida, eliminamos ROLE_ADMIN de SharedPreferences
+                // Si la sesión no es válida, eliminamos ROLE de SharedPreferences
                 menu_login.isVisible = true
                 menu_logout.isVisible = false
-                Log.v("MENU_LOGOUT3", "${menu_logout.isVisible}")
-                Log.v("MENU_LOGIN3", "${menu_login.isVisible}")
-
                 sharedPrefs.edit().putString("ROLE", "").apply()
-
 
 
             }
         }
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_PRODUCT_REQUEST_CODE && resultCode == RESULT_OK) {
             val productSaved = data?.getBooleanExtra("product_saved", false) ?: false
-            Log.d("DEBUG_FLOW", "Product saved: $productSaved")
             if (productSaved) {
-                Log.d("DEBUG_FLOW", "Fetching products from API...")
                 fetchProductsFromApi()
             }
         }
     }
-    var cookieManager = android.webkit.CookieManager.getInstance()
 
     // Función asincrónica que simula obtener el rol de SharedPreferences
     fun getRoleFromSharedPreferences(callback: (String?) -> Unit) {
@@ -146,13 +129,13 @@ class MainActivity : AppCompatActivity() {
         // Refrescar la lista de productos
         Handler(Looper.getMainLooper()).postDelayed({
             fetchProductsFromApi()
-            checkSessionAsync(this)
+            checkSessionAsync()
         }, 1000) // Retraso de 1 segundo    }
 
         val roleValue = sharedPrefs.getString("ROLE", null)
         val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
 
-        if(roleValue == "ROLE_ADMIN"){
+        if (roleValue == "ROLE_ADMIN") {
             fab.show()
             // FloatingActionButton para añadir productos
             fab.setOnClickListener {
@@ -160,27 +143,22 @@ class MainActivity : AppCompatActivity() {
                 //addProductLauncher.launch(intent)
                 startActivityForResult(intent, 1);
             }
-        }
-        else{
+        } else {
             fab.hide()
         }
 
         invalidateOptionsMenu()  // Esto actualiza la vista del menú
     }
 
-    fun loadCookieToRetrofit(context: Context) {
+    fun loadCookieToRetrofit() {
         val cookieValue = sharedPrefs.getString("JSESSIONID", null)
 
         if (cookieValue != null) {
-            val cookie = Cookie.Builder()
-                .name("JSESSIONID")
-                .value(cookieValue)
-                .domain("192.168.1.143")
-                .path("/")
-                .build()
-            RetrofitClient.cookieJar.saveFromResponse(
-                Constants.SERVER_URL.toHttpUrlOrNull()!!,
-                listOf(cookie)
+            val cookie =
+                Cookie.Builder().name("JSESSIONID").value(cookieValue).domain("192.168.1.143")
+                    .path("/").build()
+            ApiClient.cookieJar.saveFromResponse(
+                Constants.SERVER_URL.toHttpUrlOrNull()!!, listOf(cookie)
             )
         }
     }
@@ -194,6 +172,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("UnsafeIntentLaunch")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Establecer el layout
@@ -203,9 +182,9 @@ class MainActivity : AppCompatActivity() {
         sharedPrefs = getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
 
         // Cargar cookie en Retrofit
-        loadCookieToRetrofit(this)
+        loadCookieToRetrofit()
 
-        checkSessionAsync(this)
+        checkSessionAsync()
 
         // Configurar el DrawerLayout y la Toolbar
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -232,19 +211,28 @@ class MainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.menu_map -> {
                     // Navegar al mapa
-                    val intent = Intent(this, MapActivity::class.java) // Cambia MapActivity por el nombre de tu actividad
+                    val intent = Intent(
+                        this, MapActivity::class.java
+                    ) // Cambia MapActivity por el nombre de tu actividad
                     startActivity(intent)
                 }
+
                 R.id.menu_cart -> {
                     // Navegar al carrito
-                    val intent = Intent(this, CartActivity::class.java) // Cambia CartActivity por el nombre de tu actividad
+                    val intent = Intent(
+                        this, CartActivity::class.java
+                    ) // Cambia CartActivity por el nombre de tu actividad
                     startActivity(intent)
                 }
+
                 R.id.menu_login -> {
                     // Navegar al login
-                    val intent = Intent(this, LoginActivity::class.java) // Cambia LoginActivity por el nombre de tu actividad
+                    val intent = Intent(
+                        this, LoginActivity::class.java
+                    ) // Cambia LoginActivity por el nombre de tu actividad
                     startActivity(intent)
                 }
+
                 R.id.menu_logout -> {
                     sharedPrefs.edit().putString("ROLE", "").apply()
                     sharedPrefs.edit().putString("JSESSIONID", "").apply()
@@ -272,22 +260,22 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
         // Configurar ActionBarDrawerToggle
         val toggle = androidx.appcompat.app.ActionBarDrawerToggle(
-            this, drawerLayout, toolbar,
-            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
         productList = mutableListOf()
-        productAdapter = ProductAdapter(
-            this,
+        productAdapter = ProductAdapter(this,
             productList,
             onDeleteClick = { product -> deleteProductFromApi(product) },
-            onAddToCartClick = { product -> addProductToCart(product) }
-        )
+            onAddToCartClick = { product -> addProductToCart(product) })
 
 
         // Vincula el RecyclerView
@@ -312,7 +300,6 @@ class MainActivity : AppCompatActivity() {
 
 
         val fab: FloatingActionButton = findViewById(R.id.fabAddProduct)
-        val menu = navigationView.menu
 
         // Llama a la función que obtiene el rol de manera asincrónica
         getRoleFromSharedPreferences { roleValue ->
@@ -321,13 +308,11 @@ class MainActivity : AppCompatActivity() {
                 fab.setOnClickListener {
                     val intent = Intent(this, NewProductActivity::class.java)
                     startActivityForResult(intent, ADD_PRODUCT_REQUEST_CODE)
-
                 }
             } else {
                 fab.hide()
             }
         }
-
 
         fetchProductsFromApi() // Llama a la API después de la configuración
     }
@@ -338,12 +323,8 @@ class MainActivity : AppCompatActivity() {
 
     // Dentro de fetchProductsFromApi(), al crear el adapter, agregamos el callback onAddToCartClick
     private fun fetchProductsFromApi() {
-        // Este code snippet asume que ya obtuviste la lista productList de la API o de donde quieras.
-        // Por simplicidad asume que ya la tienes.
-        Log.d("API_RESPONSE", "FETCHING PRODUCTS FROM API")
-
         // Cargar productos (ejemplo)
-        RetrofitClient.apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
+        ApiClient.apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
             override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { fetchedProducts ->
@@ -359,14 +340,13 @@ class MainActivity : AppCompatActivity() {
                                 productAdapter.notifyDataSetChanged()
                             }
                         }
-
                         Log.d("API_RESPONSE", "Productos cargados con éxito (${response.code()})")
-
                     }
                 } else {
                     Log.e("API_RESPONSE", "Error: ${response.code()}")
                 }
             }
+
             override fun onFailure(call: Call<List<Product>>, t: Throwable) {
                 Log.e("API_ERROR", "Failure: ${t.message}")
             }
@@ -395,7 +375,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun deleteProductFromApi(product: Product) {
-        RetrofitClient.apiService.deleteProduct(product.id).enqueue(object : Callback<Boolean> {
+        ApiClient.apiService.deleteProduct(product.id).enqueue(object : Callback<Boolean> {
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                 if (response.isSuccessful) {
                     productAdapter.removeProduct(product) // Eliminamos el producto del adaptador
