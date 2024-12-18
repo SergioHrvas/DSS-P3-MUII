@@ -1,8 +1,6 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
-import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -15,6 +13,7 @@ import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import com.example.myapplication.R
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult

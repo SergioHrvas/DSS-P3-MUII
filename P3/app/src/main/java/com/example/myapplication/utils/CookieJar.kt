@@ -1,6 +1,5 @@
-package com.example.myapplication
+package com.example.myapplication.utils
 
-import android.util.Log
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl

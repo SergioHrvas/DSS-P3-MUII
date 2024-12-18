@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.adapter.CartAdapter
+import com.example.myapplication.model.Product
+import com.example.myapplication.R
 import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

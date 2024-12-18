@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".CartActivity"
+    tools:context=".activities.CartActivity"
     android:background="@drawable/background_gradient">
 
     <!-- Header encajado en la parte superior -->

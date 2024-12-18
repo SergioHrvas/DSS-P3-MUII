@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
 import android.content.Context
 import android.os.Bundle
@@ -9,6 +9,11 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.model.Product
+import com.example.myapplication.R
+import com.example.myapplication.service.ApiClient
+import com.example.myapplication.service.OrderRequest
+import com.example.myapplication.service.OrderResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call

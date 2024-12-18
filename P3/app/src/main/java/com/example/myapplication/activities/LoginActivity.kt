@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
 import android.content.Context
 import android.content.Intent
@@ -16,8 +16,12 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import com.example.myapplication.utils.Constants
+import com.example.myapplication.R
+import com.example.myapplication.model.User
+import com.example.myapplication.service.ApiClient
+import com.example.myapplication.service.LoginResponse
 import com.google.android.material.textfield.TextInputLayout
-import com.google.gson.Gson
 
 class LoginActivity : ComponentActivity() {
     private lateinit var btnLogin: Button

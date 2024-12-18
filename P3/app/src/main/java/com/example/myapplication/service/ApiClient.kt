@@ -1,5 +1,7 @@
-package com.example.myapplication
+package com.example.myapplication.service
 
+import com.example.myapplication.utils.Constants
+import com.example.myapplication.utils.PersistentCookieJar
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

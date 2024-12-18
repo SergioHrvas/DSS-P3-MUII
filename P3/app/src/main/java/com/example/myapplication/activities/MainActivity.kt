@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,6 +17,12 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.utils.Constants
+import com.example.myapplication.model.Product
+import com.example.myapplication.adapter.ProductAdapter
+import com.example.myapplication.R
+import com.example.myapplication.service.ApiClient
+import com.example.myapplication.service.SessionVerificationResponse
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson

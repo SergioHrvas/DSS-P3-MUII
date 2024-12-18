@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.utils
 
 object Constants {
     //const val SERVER_URL = "http://10.0.2.2:8080/"

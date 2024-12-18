@@ -1,8 +1,8 @@
-package com.example.myapplication
+package com.example.myapplication.service
 
-import android.view.PixelCopy.Request
+import com.example.myapplication.model.Product
+import com.example.myapplication.model.User
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path

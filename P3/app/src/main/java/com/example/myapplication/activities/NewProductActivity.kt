@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -21,6 +21,10 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.example.myapplication.model.Product
+import com.example.myapplication.adapter.ProductAdapter
+import com.example.myapplication.R
+import com.example.myapplication.service.ApiClient
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
