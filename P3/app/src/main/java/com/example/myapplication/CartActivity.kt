@@ -2,6 +2,8 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,9 +32,20 @@ class CartActivity : AppCompatActivity() {
         // Enlazar vistas
         recyclerView = findViewById(R.id.recyclerViewCart)
         textViewTotalPrice = findViewById(R.id.textViewTotalPrice)
-        buttonBack = findViewById(R.id.buttonBack)
+        buttonBack = findViewById(R.id.buttonBack2)
         buttonCheckout = findViewById(R.id.buttonCheckout)
         buttonClearCart = findViewById(R.id.buttonClearCart)
+
+        // Encontrar el botón de retroceso
+        val buttonBack: ImageButton = findViewById(R.id.buttonBack)
+
+        // Hacer visible el botón de retroceso
+        buttonBack.visibility = View.VISIBLE
+
+        // Configurar la acción de retroceso
+        buttonBack.setOnClickListener {
+            onBackPressed()  // Llamada para volver a la actividad anterior
+        }
 
         // Configurar RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)

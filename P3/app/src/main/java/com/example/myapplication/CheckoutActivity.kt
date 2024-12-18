@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -41,6 +42,18 @@ class CheckoutActivity : AppCompatActivity() {
         buttonConfirm.setOnClickListener {
             placeOrder()
         }
+
+        // Encontrar el botón de retroceso
+        val buttonBack: ImageButton = findViewById(R.id.buttonBack)
+
+        // Hacer visible el botón de retroceso
+        buttonBack.visibility = View.VISIBLE
+
+        // Configurar la acción de retroceso
+        buttonBack.setOnClickListener {
+            onBackPressed()  // Llamada para volver a la actividad anterior
+        }
+
     }
 
     private fun loadCartItems() {

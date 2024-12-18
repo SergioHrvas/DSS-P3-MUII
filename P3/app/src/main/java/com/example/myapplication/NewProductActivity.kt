@@ -14,8 +14,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -47,7 +49,7 @@ class NewProductActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_product)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
-        headerTitle.text = "${headerTitle.text} - Crear producto"
+        headerTitle.text = "Crear producto"
 
         imageViewProduct = findViewById(R.id.imageViewProduct)
         btnSelectImage = findViewById(R.id.btnSelectImage)
@@ -109,6 +111,19 @@ class NewProductActivity : ComponentActivity() {
             }
             override fun afterTextChanged(editable: Editable?) {}
         })
+
+
+        // Encontrar el botón de retroceso
+        val buttonBack: ImageButton = findViewById(R.id.buttonBack)
+
+        // Hacer visible el botón de retroceso
+        buttonBack.visibility = View.VISIBLE
+
+        // Configurar la acción de retroceso
+        buttonBack.setOnClickListener {
+            onBackPressed()  // Llamada para volver a la actividad anterior
+        }
+
     }
 
     private fun openImageChooser() {

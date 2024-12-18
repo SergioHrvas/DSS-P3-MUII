@@ -15,8 +15,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -48,6 +50,18 @@ class LoginActivity : ComponentActivity() {
         setContentView(R.layout.login)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
         headerTitle.text = "${headerTitle.text} - Iniciar sesión"
+
+        // Encontrar el botón de retroceso
+        val buttonBack: ImageButton = findViewById(R.id.buttonBack)
+
+        // Hacer visible el botón de retroceso
+        buttonBack.visibility = View.VISIBLE
+
+        // Configurar la acción de retroceso
+        buttonBack.setOnClickListener {
+            onBackPressed()  // Llamada para volver a la actividad anterior
+        }
+
 
         btnLogin = findViewById(R.id.btnLogin)
 

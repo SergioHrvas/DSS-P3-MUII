@@ -12,6 +12,8 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import android.Manifest
 import android.os.Looper
+import android.view.View
+import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -48,6 +50,17 @@ class MapActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_REQUEST_CODE
             )
+        }
+
+        // Encontrar el botón de retroceso
+        val buttonBack: ImageButton = findViewById(R.id.buttonBack)
+
+        // Hacer visible el botón de retroceso
+        buttonBack.visibility = View.VISIBLE
+
+        // Configurar la acción de retroceso
+        buttonBack.setOnClickListener {
+            onBackPressed()  // Llamada para volver a la actividad anterior
         }
 
         // Inicializar el MapView

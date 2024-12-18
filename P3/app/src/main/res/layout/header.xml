@@ -17,6 +17,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
+            <!-- Botón de retroceso, visible solo en las actividades que lo necesiten -->
+            <ImageButton
+                android:id="@+id/buttonBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_back"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Volver"
+                android:visibility="gone" /> <!-- Inicialmente invisible -->
 
             <!-- Título centrado en la Toolbar -->
             <TextView
