@@ -49,7 +49,7 @@ class LoginActivity : ComponentActivity() {
 
         setContentView(R.layout.login)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
-        headerTitle.text = "${headerTitle.text} - Iniciar sesión"
+        headerTitle.text = "Iniciar sesión"
 
         // Encontrar el botón de retroceso
         val buttonBack: ImageButton = findViewById(R.id.buttonBack)
