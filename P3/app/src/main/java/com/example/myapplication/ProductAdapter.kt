@@ -25,13 +25,13 @@ class ProductAdapter(
         val textViewName: TextView = itemView.findViewById(R.id.productName)
         val textViewPrice: TextView = itemView.findViewById(R.id.productPrice)
         val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
-        val addCartButton: ImageButton = itemView.findViewById(R.id.addCartButton) // Asegúrate de tener este botón en el layout
+        val addCartButton: ImageButton =
+            itemView.findViewById(R.id.addCartButton) // Asegúrate de tener este botón en el layout
         val imageViewProduct: ImageView = itemView.findViewById(R.id.imageViewProduct)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.product_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.product_item, parent, false)
         return ProductViewHolder(view)
     }
 
@@ -42,21 +42,18 @@ class ProductAdapter(
 
         val fullImageUrl = Constants.SERVER_URL + product.imagePath
         println(fullImageUrl)
-        Glide.with(context)
-            .load(fullImageUrl)
-            .error(R.drawable.image_default_foreground)
+        Glide.with(context).load(fullImageUrl).error(R.drawable.image_default_foreground)
             .into(holder.imageViewProduct)
 
 
         val sharedPrefs = context.getSharedPreferences("AppCookies", Context.MODE_PRIVATE)
         val roleValue = sharedPrefs.getString("ROLE", null)
 
-        if(roleValue == "ROLE_ADMIN"){
+        if (roleValue == "ROLE_ADMIN") {
             holder.deleteButton.visibility = View.VISIBLE
             // FloatingActionButton para añadir productos
 
-        }
-        else{
+        } else {
             holder.deleteButton.visibility = View.GONE
         }
         holder.deleteButton.setOnClickListener {

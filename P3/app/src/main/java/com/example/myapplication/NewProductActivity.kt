@@ -27,7 +27,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.http.Part
 import java.io.File
 import java.net.URI
 
@@ -40,7 +39,6 @@ class NewProductActivity : ComponentActivity() {
     private lateinit var btnNewProduct: Button
 
     private val IMAGE_PICK_CODE = 1000
-    private val CAMERA_REQUEST_CODE = 1001
 
     private var selectedImageUri: URI? = null
     private var selectedImageFile: File? = null
@@ -76,10 +74,12 @@ class NewProductActivity : ComponentActivity() {
                         setResult(RESULT_OK, intent)
                         finish()
                     } else {
-                        Toast.makeText(this, "El precio no puede estar vacío", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "El precio no puede estar vacío", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 } else {
-                    Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT)
+                        .show()
                 }
             } else {
                 Toast.makeText(this, "Por favor selecciona una imagen", Toast.LENGTH_SHORT).show()
@@ -88,27 +88,41 @@ class NewProductActivity : ComponentActivity() {
 
         val editTextName: EditText = findViewById(R.id.editTextName)
         editTextName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun beforeTextChanged(
+                charSequence: CharSequence?, start: Int, count: Int, after: Int
+            ) {
+            }
+
+            override fun onTextChanged(
+                charSequence: CharSequence?, start: Int, before: Int, count: Int
+            ) {
                 if (charSequence?.isNotEmpty() == true) {
                     editTextName.hint = ""
                 } else {
                     editTextName.hint = "Nombre"
                 }
             }
+
             override fun afterTextChanged(editable: Editable?) {}
         })
 
         val editTextPrice: EditText = findViewById(R.id.editTextPrice)
         editTextPrice.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun beforeTextChanged(
+                charSequence: CharSequence?, start: Int, count: Int, after: Int
+            ) {
+            }
+
+            override fun onTextChanged(
+                charSequence: CharSequence?, start: Int, before: Int, count: Int
+            ) {
                 if (charSequence?.isNotEmpty() == true) {
                     editTextPrice.hint = ""
                 } else {
                     editTextPrice.hint = "Nombre"
                 }
             }
+
             override fun afterTextChanged(editable: Editable?) {}
         })
 
@@ -140,7 +154,7 @@ class NewProductActivity : ComponentActivity() {
                 selectedImageUri = URI(uri.toString())
                 val filePath = getFilePathFromUri(uri)
                 val selectedImageFile = File(filePath)
-                val permanentFile = File(filesDir, "selected_image.png") // Asegúrate de usar la extensión correcta
+                val permanentFile = File(filesDir, "selected_image.png")
 
                 if (selectedImageFile.exists()) {
                     selectedImageFile.copyTo(permanentFile, overwrite = true)
@@ -148,9 +162,12 @@ class NewProductActivity : ComponentActivity() {
 
                     imageViewProduct.setImageURI(Uri.fromFile(permanentFile))
 
-                    Toast.makeText(this, "Imagen seleccionada: ${permanentFile.name}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this, "Imagen seleccionada: ${permanentFile.name}", Toast.LENGTH_LONG
+                    ).show()
 
-                    this.selectedImageFile = permanentFile // Asignar el archivo con extensión correcta
+                    this.selectedImageFile =
+                        permanentFile // Asignar el archivo con extensión correcta
                 }
             }
         }
@@ -185,26 +202,27 @@ class NewProductActivity : ComponentActivity() {
         val imageRequestBody = image.asRequestBody("image/*".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("file", image.name, imageRequestBody)
 
-        RetrofitClient.apiService.createProduct(productPart, imagePart).enqueue(object : Callback<Product> {
-            override fun onResponse(call: Call<Product>, response: Response<Product>) {
-                Log.v("API_RESPONSE", "$response")
-                if (response.isSuccessful) {
-                    val data = response.body()
-                    Log.v("API_RESPONSE", "${data}")
-                    val intent = Intent()
-                    intent.putExtra("product_saved", true)
-                    setResult(RESULT_OK, intent)
-                    finish()
-                } else {
-                    Log.e("API_RESPONSE", "Error: ${response.code()}")
+        ApiClient.apiService.createProduct(productPart, imagePart)
+            .enqueue(object : Callback<Product> {
+                override fun onResponse(call: Call<Product>, response: Response<Product>) {
+                    Log.v("API_RESPONSE", "$response")
+                    if (response.isSuccessful) {
+                        val data = response.body()
+                        Log.v("API_RESPONSE", "${data}")
+                        val intent = Intent()
+                        intent.putExtra("product_saved", true)
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    } else {
+                        Log.e("API_RESPONSE", "Error: ${response.code()}")
+
+                    }
 
                 }
 
-            }
-
-            override fun onFailure(call: Call<Product>, t: Throwable) {
-                Log.e("API_ERROR", "Failure: ${t.message}")
-            }
-        })
+                override fun onFailure(call: Call<Product>, t: Throwable) {
+                    Log.e("API_ERROR", "Failure: ${t.message}")
+                }
+            })
     }
 }

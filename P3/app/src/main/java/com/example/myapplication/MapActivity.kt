@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import java.io.Serializable
+
 class MapActivity : AppCompatActivity() {
     private lateinit var mapView: MapView
     private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
@@ -36,19 +37,33 @@ class MapActivity : AppCompatActivity() {
         setContentView(R.layout.map_view)
 
         val storeLocations = listOf(
-            mapOf("loc" to GeoPoint(37.19554309563983, -3.6268487987321323), "name" to "Almacén Bellas Artes", "color" to "red"),
-            mapOf("loc" to GeoPoint(37.19671719732779, -3.6244666179139444), "name" to "Almacén ETSIIT", "color" to "purple"),
-            mapOf("loc" to GeoPoint(37.17970832110029, -3.6095428055522327), "name" to "Almacén Facultad de Ciencias", "color" to "blue"),
-            mapOf("loc" to GeoPoint(37.19830677588794, -3.629498442349833), "name" to "Almacén Edif Aux ETSIIT", "color" to "green")
+            mapOf(
+                "loc" to GeoPoint(37.19554309563983, -3.6268487987321323),
+                "name" to "Almacén Bellas Artes",
+                "color" to "red"
+            ), mapOf(
+                "loc" to GeoPoint(37.19671719732779, -3.6244666179139444),
+                "name" to "Almacén ETSIIT",
+                "color" to "purple"
+            ), mapOf(
+                "loc" to GeoPoint(37.17970832110029, -3.6095428055522327),
+                "name" to "Almacén Facultad de Ciencias",
+                "color" to "blue"
+            ), mapOf(
+                "loc" to GeoPoint(37.19830677588794, -3.629498442349833),
+                "name" to "Almacén Edif Aux ETSIIT",
+                "color" to "green"
+            )
         )
 
         // Verificar permisos
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
+        if (ContextCompat.checkSelfPermission(
                 this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_REQUEST_CODE
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE
             )
         }
 
@@ -129,19 +144,16 @@ class MapActivity : AppCompatActivity() {
 
     private fun getUserLocation() {
         if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                this, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
         }
 
         // Obtener última ubicación conocida
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     val userLocation = GeoPoint(location.latitude, location.longitude)
                     mapView.controller.setCenter(userLocation)

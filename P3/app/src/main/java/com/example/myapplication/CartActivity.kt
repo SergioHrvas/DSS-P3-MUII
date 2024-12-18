@@ -16,7 +16,7 @@ class CartActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var cartAdapter: CartAdapter
     private lateinit var textViewTotalPrice: TextView
-    private lateinit var buttonBack: MaterialButton
+    private lateinit var buttonBack2: MaterialButton
     private lateinit var buttonCheckout: MaterialButton
     private lateinit var buttonClearCart: MaterialButton
 
@@ -32,7 +32,7 @@ class CartActivity : AppCompatActivity() {
         // Enlazar vistas
         recyclerView = findViewById(R.id.recyclerViewCart)
         textViewTotalPrice = findViewById(R.id.textViewTotalPrice)
-        buttonBack = findViewById(R.id.buttonBack2)
+        buttonBack2 = findViewById(R.id.buttonBack2)
         buttonCheckout = findViewById(R.id.buttonCheckout)
         buttonClearCart = findViewById(R.id.buttonClearCart)
 
@@ -56,7 +56,7 @@ class CartActivity : AppCompatActivity() {
         loadCartItems()
 
         // Botón para regresar
-        buttonBack.setOnClickListener {
+        buttonBack2.setOnClickListener {
             finish()
         }
         buttonClearCart.setOnClickListener {

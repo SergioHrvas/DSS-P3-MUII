@@ -85,35 +85,48 @@ class CheckoutActivity : AppCompatActivity() {
 
         val totalPrice = cartItems.sumOf { it.price }
         val orderRequest = OrderRequest(
-            products = cartItems,
-            totalAmount = totalPrice
+            products = cartItems, totalAmount = totalPrice
         )
 
         showLoading(true)
 
-        RetrofitClient.apiService.createOrder(orderRequest).enqueue(object : Callback<OrderResponse> {
+        ApiClient.apiService.createOrder(orderRequest).enqueue(object : Callback<OrderResponse> {
             override fun onResponse(call: Call<OrderResponse>, response: Response<OrderResponse>) {
                 showLoading(false)
                 if (response.isSuccessful) {
                     val orderResponse = response.body()
                     if (orderResponse?.status == "true") {
                         // Compra exitosa
-                        Toast.makeText(this@CheckoutActivity, "Compra realizada con éxito. Orden ID: ${orderResponse.id}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this@CheckoutActivity,
+                            "Compra realizada con éxito. Orden ID: ${orderResponse.id}",
+                            Toast.LENGTH_LONG
+                        ).show()
                         clearCart()
                         finish()
                     } else {
                         // Error lógico
-                        Toast.makeText(this@CheckoutActivity, "Error al procesar la compra: ${orderResponse?.message ?: "Desconocido"}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this@CheckoutActivity,
+                            "Error al procesar la compra: ${orderResponse?.message ?: "Desconocido"}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 } else {
                     // Error HTTP
-                    Toast.makeText(this@CheckoutActivity, "Error del servidor: ${response.code()}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this@CheckoutActivity,
+                        "Error del servidor: ${response.code()}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<OrderResponse>, t: Throwable) {
                 showLoading(false)
-                Toast.makeText(this@CheckoutActivity, "Error de red: ${t.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this@CheckoutActivity, "Error de red: ${t.message}", Toast.LENGTH_LONG
+                ).show()
             }
         })
     }
