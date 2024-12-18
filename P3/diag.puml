@@ -1,17 +1,9 @@
 @startuml
 package com.example.myapplication {
 
-    ' ApiClient
-    class ApiClient {
-        - BASE_URL: String
-        + retrofit: Retrofit
-        + <T> createService(service: Class<T>): T
-    }
-
     ' ApiService
     interface ApiService {
         + getAllProducts(): Call<List<Product>>
-        + getCartProducts(): Call<List<CartProduct>>
         + createProduct(product: MultipartBody.Part, file: MultipartBody.Part): Call<Product>
         + deleteProduct(id: Long): Call<Boolean>
         + checkout(): Call<String>
@@ -28,16 +20,6 @@ package com.example.myapplication {
 
     class SessionVerificationResponse {
         + valid: Boolean
-    }
-
-    ' CartProduct
-    class CartProduct {
-        + id: Long
-        + name: String
-        + price: Double
-        + image: String
-        + num: Int
-        + total: Double
     }
 
     ' CheckoutActivity
@@ -153,8 +135,8 @@ package com.example.myapplication {
         + password: String
     }
 
-    ' RetrofitClient (añadido)
-    object RetrofitClient {
+    ' ApiClient (añadido)
+    object ApiClient {
         - retrofit: Retrofit?
         - cookieJar: PersistentCookieJar
         - okHttpClient: OkHttpClient
@@ -164,14 +146,11 @@ package com.example.myapplication {
     }
 
     ' Relationships
-    ApiClient o-- Retrofit
-    ApiClient --> ApiService
     ApiService o-- LoginResponse
     ApiService o-- SessionVerificationResponse
     ApiService --> OrderRequest
     ApiService --> OrderResponse
     CheckoutActivity --> Product
-    CheckoutActivity --> CartProduct
     CheckoutActivity --> TextView
     CheckoutActivity --> Button
     CheckoutActivity --> ProgressBar
@@ -195,7 +174,7 @@ package com.example.myapplication {
     NewProductActivity --> File
     NewProductActivity --> Product
     ProductAdapter --> Product
-    RetrofitClient --> ApiService
-    RetrofitClient --> PersistentCookieJar
+    ApiClient --> ApiService
+    ApiClient --> PersistentCookieJar
 }
 @enduml
