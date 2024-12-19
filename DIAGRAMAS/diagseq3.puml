@@ -1,0 +1,25 @@
+@startuml
+actor Admin
+participant MainActivity
+participant NewProductActivity
+participant ApiService
+participant ProductController
+
+Admin -> MainActivity: Open Application
+MainActivity -> ApiService: getAllProducts()
+ApiService -> ProductController: @GET("/api/products")
+ProductController -> ApiService: ProductList
+ApiService -> MainActivity: ProductList
+MainActivity -> Admin: Show Product List
+Admin -> MainActivity: Create Product
+MainActivity -> NewProductActivity: Open New Product Form
+NewProductActivity -> Admin: Show Form
+Admin -> NewProductActivity: Fill in product details
+Admin -> NewProductActivity: Submit Form
+NewProductActivity -> ApiService: createProduct(productDetails)
+ApiService -> ProductController: @POST("/api/products")
+ProductController -> ApiService: Confirmation/ProductCreated
+ApiService -> NewProductActivity: Product Created
+NewProductActivity -> MainActivity: Update Product List
+MainActivity -> Admin: Show Updated Product List
+@enduml
