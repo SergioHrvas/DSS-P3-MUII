@@ -1,5 +1,5 @@
 @startuml
-package com.example.myapplication {
+package com.example.myapplication.service {
 
     ' ApiService
     interface ApiService {
@@ -21,6 +21,32 @@ package com.example.myapplication {
     class SessionVerificationResponse {
         + valid: Boolean
     }
+
+    ' OrderRequest
+    class OrderRequest {
+        + products: List<Product>
+        + totalAmount: Double
+    }
+
+    ' OrderResponse
+    class OrderResponse {
+        + status: String
+        + id: String?
+        + message: String?
+    }
+
+    ' ApiClient
+    object ApiClient {
+        - retrofit: Retrofit?
+        - cookieJar: PersistentCookieJar
+        - okHttpClient: OkHttpClient
+        + getClient(baseUrl: String): Retrofit
+        + getCookie(name: String): String?
+        + apiService: ApiService
+    }
+}
+
+package com.example.myapplication.activities {
 
     ' CheckoutActivity
     class CheckoutActivity {
@@ -51,7 +77,7 @@ package com.example.myapplication {
         - login(name: String, password: String): void
     }
 
-    ' MainActivity (agregada)
+    ' MainActivity
     class MainActivity {
         - btnViewCart: Button
         - btnCheckout: Button
@@ -63,7 +89,7 @@ package com.example.myapplication {
         - proceedToCheckout(): void
     }
 
-' MapActivity (agregada)
+    ' MapActivity
     class MapActivity {
         - mapView: MapView
         - fusedLocationClient: FusedLocationProviderClient
@@ -75,7 +101,7 @@ package com.example.myapplication {
         - getUserLocation(): void
     }
 
- ' NewProductActivity (añadida)
+    ' NewProductActivity
     class NewProductActivity {
         - recyclerView: RecyclerView
         - productAdapter: ProductAdapter
@@ -94,21 +120,30 @@ package com.example.myapplication {
         - createProduct(name: String, price: Double, image: File): void
     }
 
-     ' OrderRequest (añadida)
-        class OrderRequest {
-            + products: List<Product>
-            + totalAmount: Double
-        }
+    ' CartActivity (añadida)
+    class CartActivity {
+        - recyclerView: RecyclerView
+        - cartAdapter: CartAdapter
+        - textViewTotalPrice: TextView
+        - buttonBack2: MaterialButton
+        - buttonCheckout: MaterialButton
+        - buttonClearCart: MaterialButton
+        - cartItems: MutableList<Product>
+        - PREFS_NAME: String
+        - CART_KEY: String
 
-        ' OrderResponse (añadida)
-        class OrderResponse {
-            + status: String
-            + id: String?
-            + message: String?
-        }
+        + onCreate(savedInstanceState: Bundle): void
+        + onResume(): void
+        - loadCartItems(): void
+        - saveCartItems(): void
+        - removeFromCart(product: Product): void
+        - clearCart(): void
+        - updateTotalPrice(): void
+    }
+}
 
-
-    ' Product (añadida)
+package com.example.myapplication.model {
+    ' Product
     class Product {
         + id: Long
         + name: String
@@ -116,7 +151,15 @@ package com.example.myapplication {
         + imagePath: String
     }
 
-    ' ProductAdapter (añadida)
+    ' User
+    class User {
+        + username: String
+        + password: String
+    }
+}
+
+package com.example.myapplication.adapter {
+    ' ProductAdapter
     class ProductAdapter {
         - context: Context
         - productList: MutableList<Product>
@@ -129,52 +172,63 @@ package com.example.myapplication {
         + removeProduct(product: Product): void
     }
 
- ' User (añadida)
-    class User {
-        + username: String
-        + password: String
-    }
+    ' CartAdapter
+    class CartAdapter {
+        - cartItems: MutableList<Product>
+        - removeCallback: (Product) -> Unit
 
-    ' ApiClient (añadido)
-    object ApiClient {
-        - retrofit: Retrofit?
-        - cookieJar: PersistentCookieJar
-        - okHttpClient: OkHttpClient
-        + getClient(baseUrl: String): Retrofit
-        + getCookie(name: String): String?
-        + apiService: ApiService
+        + onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder
+        + onBindViewHolder(holder: CartViewHolder, position: Int): void
+        + getItemCount(): Int
+        + updateCart(newCartItems: MutableList<Product>): void
     }
-
-    ' Relationships
-    ApiService o-- LoginResponse
-    ApiService o-- SessionVerificationResponse
-    ApiService --> OrderRequest
-    ApiService --> OrderResponse
-    CheckoutActivity --> Product
-    CheckoutActivity --> TextView
-    CheckoutActivity --> Button
-    CheckoutActivity --> ProgressBar
-    LoginActivity --> RecyclerView
-    LoginActivity --> ProductAdapter
-    LoginActivity --> Button
-    LoginActivity --> CookieManager
-    LoginActivity --> ApiService
-    MainActivity --> Button
-    MainActivity --> RecyclerView
-    MainActivity --> ProductAdapter
-    MapActivity --> MapView
-    MapActivity --> FusedLocationProviderClient
-    MapActivity --> LocationCallback
-    MapActivity --> Marker
-    NewProductActivity --> RecyclerView
-    NewProductActivity --> ProductAdapter
-    NewProductActivity --> ImageView
-    NewProductActivity --> Button
-    NewProductActivity --> URI
-    NewProductActivity --> File
-    NewProductActivity --> Product
-    ProductAdapter --> Product
-    ApiClient --> ApiService
-    ApiClient --> PersistentCookieJar
 }
+
+package com.example.myapplication.utils {
+    class PersistentCookieJar
+}
+
+' Relationships
+ApiService o-- LoginResponse
+ApiService o-- SessionVerificationResponse
+ApiService --> OrderRequest
+ApiService --> OrderResponse
+CheckoutActivity --> Product
+CheckoutActivity --> TextView
+CheckoutActivity --> Button
+CheckoutActivity --> ProgressBar
+CheckoutActivity --> ApiService
+LoginActivity --> RecyclerView
+LoginActivity --> ProductAdapter
+LoginActivity --> Button
+LoginActivity --> CookieManager
+LoginActivity --> ApiService
+MainActivity --> Button
+MainActivity --> RecyclerView
+MainActivity --> ProductAdapter
+MainActivity --> ApiService
+MapActivity --> MapView
+MapActivity --> FusedLocationProviderClient
+MapActivity --> LocationCallback
+MapActivity --> Marker
+NewProductActivity --> RecyclerView
+NewProductActivity --> ProductAdapter
+NewProductActivity --> ImageView
+NewProductActivity --> Button
+NewProductActivity --> URI
+NewProductActivity --> File
+NewProductActivity --> Product
+NewProductActivity --> ApiService
+ProductAdapter --> Product
+CartAdapter --> Product
+CartAdapter --> Button
+CartActivity --> RecyclerView
+CartActivity --> CartAdapter
+CartActivity --> TextView
+CartActivity --> MaterialButton
+CartActivity --> Product
+CartActivity --> ApiService
+ApiClient --> ApiService
+ApiClient --> PersistentCookieJar
+
 @enduml

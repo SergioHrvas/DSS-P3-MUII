@@ -32,8 +32,6 @@ class LoginActivity : ComponentActivity() {
 
         cookieManager = android.webkit.CookieManager.getInstance()
 
-        val cookies = cookieManager.getCookie(Constants.SERVER_URL) // Cambia por tu dominio.
-
         setContentView(R.layout.login)
         val headerTitle = findViewById<TextView>(R.id.headerTitle)
         headerTitle.text = "Iniciar sesión"
