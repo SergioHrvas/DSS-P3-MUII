@@ -21,8 +21,6 @@ import com.fastcart.service.impl.UserDetailsServiceImpl;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -32,7 +30,8 @@ public class WebSecurityConfig {
         this.userDetailsService = userDetailsService;
     }
     
-    @Bean
+    @SuppressWarnings("removal")
+	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector, AuthenticationManager authenticationManager) throws Exception {
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
@@ -54,7 +53,8 @@ public class WebSecurityConfig {
                         mvcMatcherBuilder.pattern("/favicon.ico"),
                         mvcMatcherBuilder.pattern("/api/login"),
                         mvcMatcherBuilder.pattern("/uploads/**"),
-                        mvcMatcherBuilder.pattern("/api/products")
+                        mvcMatcherBuilder.pattern("/api/products"),
+                        mvcMatcherBuilder.pattern("products/searchAndFilter")
                     ).permitAll()
                     .requestMatchers(mvcMatcherBuilder.pattern("/admin/**"), mvcMatcherBuilder.pattern("/api/admin/**")).hasRole("ADMIN")
                     .requestMatchers(mvcMatcherBuilder.pattern("/cart/**")).authenticated()

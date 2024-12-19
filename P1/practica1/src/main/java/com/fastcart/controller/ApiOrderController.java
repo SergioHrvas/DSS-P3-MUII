@@ -14,11 +14,11 @@ import com.fastcart.model.OrderResponse;
 import com.fastcart.service.interf.OrderService;
 @RestController
 @RequestMapping("/api/orders")
-public class OrderController {
+public class ApiOrderController {
 
     private final OrderService orderService;
 
-    public OrderController(OrderService orderService) {
+    public ApiOrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 

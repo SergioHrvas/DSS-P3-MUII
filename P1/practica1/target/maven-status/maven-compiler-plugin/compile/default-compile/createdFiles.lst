@@ -6,7 +6,6 @@ com\fastcart\service\impl\OrderServiceImpl.class
 com\fastcart\service\impl\UserDetailsServiceImpl.class
 com\fastcart\service\interf\UserService.class
 com\fastcart\config\CustomApiLoginFilter.class
-com\fastcart\controller\ApiCartController.class
 com\fastcart\controller\AdminController.class
 com\fastcart\service\impl\ProductServiceImpl.class
 com\fastcart\controller\ApiSessionController.class
@@ -26,7 +25,6 @@ com\fastcart\config\LoginRequest.class
 com\fastcart\controller\CartController.class
 com\fastcart\model\CartItem.class
 com\fastcart\repository\OrderItemRepo.class
-com\fastcart\controller\OrderController.class
 com\fastcart\service\impl\UserServiceImpl.class
 com\fastcart\controller\ApiAdminController.class
 com\fastcart\repository\UserRepo.class

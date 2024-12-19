@@ -10,13 +10,13 @@ public class OrderResponse {
     public OrderResponse(String status, String message, Order order) {
         this.status = status;
         this.message = message;
-        this.order = order;
+        this.setOrder(order);
     }
     public OrderResponse(String status, Long id, String message, Order order) {
         this.status = status;
         this.id = id;
         this.message = message;
-        this.order = order;
+        this.setOrder(order);
     }
     public OrderResponse(String status, Long id, String message) {
         this.status = status;
@@ -48,4 +48,10 @@ public class OrderResponse {
         public void setMessage(String message) {
             this.message = message;
         }
+		public Order getOrder() {
+			return order;
+		}
+		public void setOrder(Order order) {
+			this.order = order;
+		}
 }

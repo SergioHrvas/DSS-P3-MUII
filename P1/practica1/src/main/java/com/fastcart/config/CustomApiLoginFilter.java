@@ -1,7 +1,6 @@
 package com.fastcart.config;
 import org.springframework.security.web.context.SecurityContextRepository;
 
-import com.fastcart.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
@@ -17,18 +16,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.awt.SystemColor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 class LoginRequest{
 	String username;
@@ -83,7 +79,8 @@ public class CustomApiLoginFilter extends OncePerRequestFilter {
         
         if (session != null) {
             SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
-            SecurityContext securityContext = securityContextRepository.loadContext(new HttpRequestResponseHolder(request, response));
+            @SuppressWarnings("deprecation")
+			SecurityContext securityContext = securityContextRepository.loadContext(new HttpRequestResponseHolder(request, response));
 
             Authentication authentication = securityContext.getAuthentication();
 
